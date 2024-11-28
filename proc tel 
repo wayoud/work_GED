@@ -1,0 +1,121 @@
+Voici un exemple de procédure PL/SQL qui répond à votre besoin. Cette procédure effectue les opérations suivantes :
+
+1. Met à jour les colonnes num_tel1, num_tel2, adresse et rue de la table assure en se basant sur les tables t24 et d6.
+
+
+2. Concatène les valeurs selon vos règles.
+
+
+3. Crée une table log (si elle n'existe pas déjà) pour stocker les changements avec les valeurs avant et après modification.
+
+
+
+Code PL/SQL
+
+-- Création de la table log pour enregistrer les changements
+BEGIN
+    EXECUTE IMMEDIATE 'CREATE TABLE log (
+        num_part      NUMBER,
+        column_name   VARCHAR2(50),
+        old_value     VARCHAR2(4000),
+        new_value     VARCHAR2(4000),
+        update_date   DATE DEFAULT SYSDATE
+    )';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -955 THEN -- Ignore error if table already exists
+            RAISE;
+        END IF;
+END;
+/
+
+-- Procédure pour mettre à jour la table assure
+CREATE OR REPLACE PROCEDURE update_assure_info IS
+BEGIN
+    -- Boucle sur chaque ligne à mettre à jour
+    FOR rec IN (
+        SELECT 
+            a.num_part,
+            a.num_tel1 AS old_tel1,
+            a.num_tel2 AS old_tel2,
+            a.adresse AS old_adresse,
+            a.rue AS old_rue,
+            t.sms1 || '&' || t.sms2 || '&' || t.sms3 AS new_tel1,
+            t.phone1 || '&' || t.phone2 AS new_tel2,
+            d.address AS new_adresse,
+            d.street AS new_rue
+        FROM assure a
+        JOIN t24 t ON a.num_part = t.client
+        JOIN d6 d ON a.num_part = d.n_client
+    ) LOOP
+        -- Mettre à jour les colonnes de la table assure
+        UPDATE assure
+        SET num_tel1 = rec.new_tel1,
+            num_tel2 = rec.new_tel2,
+            adresse  = rec.new_adresse,
+            rue      = rec.new_rue
+        WHERE num_part = rec.num_part;
+
+        -- Insérer les changements dans la table log
+        INSERT INTO log (num_part, column_name, old_value, new_value)
+        VALUES (rec.num_part, 'num_tel1', rec.old_tel1, rec.new_tel1);
+        
+        INSERT INTO log (num_part, column_name, old_value, new_value)
+        VALUES (rec.num_part, 'num_tel2', rec.old_tel2, rec.new_tel2);
+
+        INSERT INTO log (num_part, column_name, old_value, new_value)
+        VALUES (rec.num_part, 'adresse', rec.old_adresse, rec.new_adresse);
+
+        INSERT INTO log (num_part, column_name, old_value, new_value)
+        VALUES (rec.num_part, 'rue', rec.old_rue, rec.new_rue);
+    END LOOP;
+
+    COMMIT;
+END;
+/
+
+Explication
+
+1. Table Log :
+
+Contient num_part, le nom de la colonne modifiée (column_name), l'ancienne valeur (old_value), la nouvelle valeur (new_value), et la date de mise à jour (update_date).
+
+
+
+2. Procédure update_assure_info :
+
+La procédure parcourt chaque ligne à mettre à jour grâce à un FOR avec un CURSOR basé sur la jointure des tables assure, t24, et d6.
+
+Les mises à jour suivent les règles fournies (concaténation, etc.).
+
+Chaque changement est enregistré dans la table log.
+
+
+
+3. Gestion des erreurs :
+
+La création de la table log ignore l'erreur si elle existe déjà (SQLCODE != -955).
+
+
+
+
+Exécution de la procédure
+
+Pour exécuter la procédure :
+
+BEGIN
+    update_assure_info;
+END;
+/
+
+Résultat
+
+1. Les colonnes de la table assure seront mises à jour.
+
+
+2. Les changements seront enregistrés dans la table log pour consultation ultérieure.
+
+
+
+Si vous avez besoin d'adaptations ou d'expliquer un point, faites-le-moi savoir !
+
