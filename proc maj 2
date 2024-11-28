@@ -1,0 +1,91 @@
+Pour éviter de loguer les colonnes où les anciennes et nouvelles valeurs sont identiques, nous pouvons ajouter une vérification dans la procédure avant d'insérer dans la table log. Voici la version mise à jour de la procédure :
+
+Code PL/SQL Mis à Jour
+
+CREATE OR REPLACE PROCEDURE update_assure_info IS
+BEGIN
+    -- Boucle sur chaque ligne à mettre à jour
+    FOR rec IN (
+        SELECT 
+            a.num_part,
+            a.num_tel1 AS old_tel1,
+            a.num_tel2 AS old_tel2,
+            a.adresse AS old_adresse,
+            a.rue AS old_rue,
+            t.sms1 || '&' || t.sms2 || '&' || t.sms3 AS new_tel1,
+            t.phone1 || '&' || t.phone2 AS new_tel2,
+            d.address AS new_adresse,
+            d.street AS new_rue
+        FROM assure a
+        JOIN t24 t ON a.num_part = t.client
+        JOIN d6 d ON a.num_part = d.n_client
+    ) LOOP
+        -- Mettre à jour les colonnes de la table assure
+        UPDATE assure
+        SET num_tel1 = rec.new_tel1,
+            num_tel2 = rec.new_tel2,
+            adresse  = rec.new_adresse,
+            rue      = rec.new_rue
+        WHERE num_part = rec.num_part;
+
+        -- Vérifier et insérer dans le log uniquement si les valeurs changent
+        IF rec.old_tel1 != rec.new_tel1 THEN
+            INSERT INTO log (num_part, column_name, old_value, new_value)
+            VALUES (rec.num_part, 'num_tel1', rec.old_tel1, rec.new_tel1);
+        END IF;
+
+        IF rec.old_tel2 != rec.new_tel2 THEN
+            INSERT INTO log (num_part, column_name, old_value, new_value)
+            VALUES (rec.num_part, 'num_tel2', rec.old_tel2, rec.new_tel2);
+        END IF;
+
+        IF rec.old_adresse != rec.new_adresse THEN
+            INSERT INTO log (num_part, column_name, old_value, new_value)
+            VALUES (rec.num_part, 'adresse', rec.old_adresse, rec.new_adresse);
+        END IF;
+
+        IF rec.old_rue != rec.new_rue THEN
+            INSERT INTO log (num_part, column_name, old_value, new_value)
+            VALUES (rec.num_part, 'rue', rec.old_rue, rec.new_rue);
+        END IF;
+    END LOOP;
+
+    COMMIT;
+END;
+/
+
+Modifications Apportées
+
+1. Ajout des Vérifications :
+
+Avant chaque insertion dans la table log, la procédure vérifie si l'ancienne valeur est différente de la nouvelle (IF rec.old_value != rec.new_value).
+
+
+
+2. Evite les Changements Inutiles :
+
+Seules les colonnes réellement modifiées sont loguées dans la table log.
+
+
+
+
+Points à Noter
+
+Les comparaisons dans les conditions IF sont sensibles à la casse et aux espaces. Si besoin, vous pouvez utiliser des fonctions comme TRIM ou UPPER pour normaliser les comparaisons.
+
+Si certaines colonnes peuvent être NULL, utilisez NVL pour éviter les erreurs, par exemple :
+
+IF NVL(rec.old_tel1, 'NULL') != NVL(rec.new_tel1, 'NULL') THEN
+
+
+Exécution
+
+Comme précédemment, exécutez la procédure :
+
+BEGIN
+    update_assure_info;
+END;
+/
+
+Cela garantit que seules les modifications réelles seront inscrites dans la table log. Si vous souhaitez d'autres ajustements, faites-le-moi savoir !
+
