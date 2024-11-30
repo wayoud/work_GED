@@ -1,0 +1,29 @@
+Objet : Validation des changements des informations client
+
+Bonjour,
+
+Je vous informe que la première étape du changement des informations clients reçues de la CNEP a été réalisée sur l’environnement de test. Vous trouverez ci-joint les différents fichiers pour validation, afin que nous puissions appliquer les modifications en production.
+
+Documents joints :
+
+Fichier des informations clients avant mise à jour
+
+Fichier des informations clients après mise à jour
+
+Fichier des changements apportés aux informations clients
+
+Fichier des impayés globaux
+
+Statistiques sur les changements
+
+
+Statistiques :
+
+Nombre total d’assurés dans la base : 244 698
+
+Nombre d’assurés modifiés : 132 271
+
+
+Cordialement,
+[Votre nom]
+
