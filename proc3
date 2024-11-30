@@ -1,0 +1,141 @@
+Voici une version mise à jour de la procédure qui déclare des variables pour tel1, tel2, adresse et rue, puis vérifie si les colonnes des tables t24 et d6 ont des valeurs non nulles avant de procéder à la concaténation. La table log est également mise à jour pour inclure toutes les colonnes de la table assure, avec deux colonnes supplémentaires : update_date (prenant la valeur actuelle de la date système) et motif (valeur statique).
+
+Code PL/SQL Mis à Jour
+
+-- Création de la table log si elle n'existe pas
+BEGIN
+    EXECUTE IMMEDIATE 'CREATE TABLE log AS 
+        SELECT a.*, NULL AS update_date, NULL AS motif
+        FROM assure a
+        WHERE 1=0'; -- Copie uniquement la structure
+    EXECUTE IMMEDIATE 'ALTER TABLE log ADD update_date DATE DEFAULT SYSDATE';
+    EXECUTE IMMEDIATE 'ALTER TABLE log ADD motif VARCHAR2(100)';
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE != -955 THEN -- Ignore erreur si la table existe déjà
+            RAISE;
+        END IF;
+END;
+/
+
+-- Procédure de mise à jour
+CREATE OR REPLACE PROCEDURE update_assure_info IS
+    -- Déclaration des variables locales
+    v_tel1   VARCHAR2(4000);
+    v_tel2   VARCHAR2(4000);
+    v_adresse VARCHAR2(4000);
+    v_rue    VARCHAR2(4000);
+BEGIN
+    -- Boucle sur les lignes à mettre à jour
+    FOR rec IN (
+        SELECT 
+            a.*,
+            t.sms1, t.sms2, t.sms3, t.phone1, t.phone2,
+            d.address, d.street
+        FROM assure a
+        JOIN t24 t ON a.num_part = t.client
+        JOIN d6 d ON a.num_part = d.n_client
+    ) LOOP
+        -- Initialiser les variables avec les nouvelles valeurs
+        v_tel1 := NULL;
+        v_tel2 := NULL;
+        v_adresse := d.address;
+        v_rue := d.street;
+
+        -- Construire tel1 en concaténant les SMS non nuls
+        IF t.sms1 IS NOT NULL THEN
+            v_tel1 := t.sms1;
+        END IF;
+        IF t.sms2 IS NOT NULL THEN
+            v_tel1 := NVL(v_tel1 || '&', '') || t.sms2;
+        END IF;
+        IF t.sms3 IS NOT NULL THEN
+            v_tel1 := NVL(v_tel1 || '&', '') || t.sms3;
+        END IF;
+
+        -- Construire tel2 en concaténant les téléphones non nuls
+        IF t.phone1 IS NOT NULL THEN
+            v_tel2 := t.phone1;
+        END IF;
+        IF t.phone2 IS NOT NULL THEN
+            v_tel2 := NVL(v_tel2 || '&', '') || t.phone2;
+        END IF;
+
+        -- Insérer les valeurs avant modification dans log
+        INSERT INTO log (num_part, num_tel1, num_tel2, adresse, rue, update_date, motif)
+        VALUES (
+            rec.num_part,
+            rec.num_tel1, rec.num_tel2, rec.adresse, rec.rue,
+            SYSDATE, 'Changement après signalétique'
+        );
+
+        -- Mettre à jour la table assure
+        UPDATE assure
+        SET num_tel1 = v_tel1,
+            num_tel2 = v_tel2,
+            adresse  = v_adresse,
+            rue      = v_rue
+        WHERE num_part = rec.num_part;
+
+    END LOOP;
+
+    COMMIT;
+END;
+/
+
+
+---
+
+Explications
+
+1. Déclaration de Variables :
+
+Les variables v_tel1, v_tel2, v_adresse et v_rue sont utilisées pour stocker temporairement les nouvelles valeurs avant la mise à jour.
+
+
+
+2. Construction Dynamique :
+
+v_tel1 et v_tel2 sont construits dynamiquement en vérifiant si sms1, sms2, sms3, phone1 et phone2 ne sont pas NULL et en les concaténant avec &.
+
+
+
+3. Table log :
+
+Contient les mêmes colonnes que assure, plus deux colonnes supplémentaires : update_date et motif (fixé à "Changement après signalétique").
+
+Les valeurs avant modification sont insérées dans log.
+
+
+
+4. Mise à Jour :
+
+La table assure est mise à jour avec les nouvelles valeurs calculées.
+
+
+
+
+
+---
+
+Exécution
+
+Pour exécuter la procédure :
+
+BEGIN
+    update_assure_info;
+END;
+/
+
+
+---
+
+Résultat
+
+Table assure : mise à jour avec les nouvelles valeurs concaténées.
+
+Table log : contient un enregistrement pour chaque modification, y compris les anciennes valeurs, la date de modification et le motif.
+
+
+Si vous avez des ajustements ou des questions, je suis là pour vous aider !
+
