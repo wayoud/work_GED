@@ -1,0 +1,9 @@
+UPDATE x
+SET your_date_column = TO_CHAR(
+    CASE
+        WHEN your_date_column LIKE '%/%/%' THEN TO_DATE(your_date_column, 'DD/MM/YYYY')
+        WHEN your_date_column LIKE '%-%-%' THEN TO_DATE(your_date_column, 'DD-MON-YY')
+    END,
+    'DD/MM/YYYY'
+)
+WHERE your_date_column IS NOT NULL;
