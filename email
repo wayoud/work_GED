@@ -1,10 +1,21 @@
+Voici une version révisée de votre email :
+
+
+---
+
+Objet : Mise à jour des données et exécution des calculs
+
 Bonjour,
 
-Les informations client CNEP sur ODS sont modifiées via la procédure update_assure_info, à partir de deux fichiers signalétiques (T24 et D6) reçus par email via les OPS.
+Après analyse avec Karim, nous avons constaté que les dates disponibles ne sont pas actualisées et que certaines dates de fin d'exposition sont nulles. Une fois ces données mises à jour, nous relancerons l'exécution des calculs pour obtenir une troisième version.
 
-Les colonnes concernées par ces modifications sont : tel1, tel2, adresse, et rue dans cette première étape. Les anciennes valeurs des données modifiées dans la table assure sont sauvegardées dans la table assure_befort ainsi que dans des fichiers DMP sur le serveur. Les journaux des modifications sont enregistrés dans la table assure_log.
+Veuillez noter que cette opération nécessite un temps conséquent en raison de la volumétrie des données et des étapes d’actualisation, de calcul et de vérification.
 
-Nous attendons la validation des OPS concernant ces modifications avant leur application en production.
+Cordialement,
+[Votre nom]
 
-Les fichiers sont en pièce jointe pour validation.
+
+---
+
+N'hésitez pas à me dire si des ajustements sont nécessaires.
 
