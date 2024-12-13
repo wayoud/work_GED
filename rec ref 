@@ -1,0 +1,23 @@
+DECLARE
+    cols VARCHAR2(4000);
+    query VARCHAR2(8000);
+BEGIN
+    -- Generate column list
+    SELECT LISTAGG(DISTINCT '''' || REF || ''' AS ' || 'REF_' || REF, ', ') WITHIN GROUP (ORDER BY REF)
+    INTO cols
+    FROM your_table;
+    
+    -- Build dynamic query
+    query := 'SELECT * FROM (
+                  SELECT PART, AGENCE, REF
+                  FROM your_table
+              )
+              PIVOT (
+                  MAX(REF) FOR REF IN (' || cols || ')
+              )
+              ORDER BY PART, AGENCE';
+
+    -- Execute the query
+    EXECUTE IMMEDIATE query;
+END;
+/
