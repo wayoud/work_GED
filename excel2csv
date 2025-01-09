@@ -1,0 +1,18 @@
+@echo off
+setlocal
+
+rem Define input and output file paths
+set inputFile="C:\path\to\your\file.xlsx"
+set outputFile="C:\path\to\your\file.csv"
+
+rem Run PowerShell command to convert the Excel file to CSV
+powershell -Command " 
+    $excel = New-Object -ComObject Excel.Application;
+    $workbook = $excel.Workbooks.Open(%inputFile%);
+    $workbook.SaveAs(%outputFile%, 6);  # 6 is the format code for CSV
+    $workbook.Close($false);
+    $excel.Quit();
+"
+
+echo Conversion complete.
+pause
