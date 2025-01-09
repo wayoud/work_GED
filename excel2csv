@@ -16,3 +16,53 @@ powershell -Command "
 
 echo Conversion complete.
 pause
+##########$
+
+@echo off
+SETLOCAL ENABLEDELAYEDEXPANSION
+
+REM Define variables
+SET ORACLE_HOME=C:\path\to\oracle\home
+SET PATH=%ORACLE_HOME%\bin;%PATH%
+SET USER=username
+SET PASSWORD=password
+SET DATABASE=database
+SET VIEW=view_bdd
+SET OUTPUT_FILE=output.csv
+SET COUNTER_FILE=counter.txt
+
+REM Read the last number from the counter file
+IF NOT EXIST %COUNTER_FILE% (
+    ECHO 1 > %COUNTER_FILE%
+)
+SET /P SEW_NUM=<%COUNTER_FILE%
+
+REM Increment the number and write it back to the counter file
+SET /A SEW_NUM+=1
+ECHO %SEW_NUM% > %COUNTER_FILE%
+
+REM Run SQL*Plus and export the data
+sqlplus -s %USER%/%PASSWORD%@%DATABASE% <<EOF
+SET HEADING OFF
+SET FEEDBACK OFF
+SET PAGESIZE 0
+SET LINESIZE 1000
+SET COLSEP ,
+SPOOL %OUTPUT_FILE%
+SELECT * FROM %VIEW%;
+SPOOL OFF
+EXIT
+EOF
+
+REM Add the header and footer
+(
+    ECHO data_sew_num:%SEW_NUM%
+    TYPE %OUTPUT_FILE%
+    ECHO #end
+    FOR /F %%A IN ('FIND /C /V "" ^< %OUTPUT_FILE%') DO ECHO %%A rows
+) > temp.csv
+
+REM Replace the original output with the updated one
+MOVE /Y temp.csv %OUTPUT_FILE%
+
+ECHO Data exported to %OUTPUT_FILE% with SEW number %SEW_NUM%
