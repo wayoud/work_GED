@@ -1,0 +1,56 @@
+To execute a PL/SQL procedure via a batch file for scheduled execution, you can use SQL*Plus (a command-line interface for Oracle databases) in the batch file. Here are the steps:
+
+1. Create the batch file (.bat):
+
+Open a text editor and create a new batch file (run_procedure.bat) with the following content:
+
+@echo off
+REM Set Oracle environment variables
+set ORACLE_HOME=C:\path\to\oracle_home
+set PATH=%ORACLE_HOME%\bin;%PATH%
+set NLS_LANG=AMERICAN_AMERICA.UTF8
+
+REM Execute the PL/SQL procedure using SQL*Plus
+sqlplus username/password@db_connection_string @run_plsql_procedure.sql
+
+Replace:
+
+C:\path\to\oracle_home with the actual path where Oracle is installed.
+
+username/password with your database login credentials.
+
+db_connection_string with your Oracle database connection details (e.g., hostname:port/sid).
+
+
+
+2. Create the SQL file (run_plsql_procedure.sql):
+
+In the same folder as your .bat file, create a file called run_plsql_procedure.sql with the following content:
+
+BEGIN
+   your_plsql_procedure_name;
+END;
+/
+
+Replace your_plsql_procedure_name with the name of your procedure.
+
+
+3. Schedule the batch file:
+
+Use Windows Task Scheduler to run the .bat file at your desired time.
+
+Open Task Scheduler.
+
+Select Create Basic Task.
+
+Set the schedule you prefer.
+
+For the action, choose Start a Program and browse to your batch file (run_procedure.bat).
+
+Save the task and it will run at the scheduled time.
+
+
+
+
+This will execute the PL/SQL procedure as part of your scheduled task.
+
