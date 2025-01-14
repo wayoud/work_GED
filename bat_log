@@ -1,0 +1,89 @@
+To automate the process on a Windows Server using a batch script (.bat file), you can follow these steps. Here's a complete batch script that performs the required tasks:
+
+Batch Script: load_and_log.bat
+
+@echo off
+setlocal
+
+:: Configuration
+set CSV_FILE=C:\path\to\your.csv
+set DEST_DIR=C:\path\to\destination
+for /f "tokens=1-4 delims=/ " %%a in ('date /t') do (set TODAY=%%c-%%a-%%b)
+set NEW_NAME=%TODAY%.csv
+set ORACLE_USER=username
+set ORACLE_PASSWORD=password
+set ORACLE_SID=oraclesid
+
+:: Load CSV into Oracle
+echo Loading CSV into Oracle...
+sqlldr userid=%ORACLE_USER%/%ORACLE_PASSWORD%@%ORACLE_SID% control=load_csv.ctl log=load.log
+
+if %ERRORLEVEL% neq 0 (
+    echo Error loading CSV into Oracle. Check load.log for details.
+    exit /b 1
+)
+
+:: Move and rename the CSV file
+echo Moving and renaming the CSV file...
+move "%CSV_FILE%" "%DEST_DIR%\%NEW_NAME%"
+
+if %ERRORLEVEL% neq 0 (
+    echo Error moving the CSV file.
+    exit /b 1
+)
+
+:: Insert log record into Oracle
+echo Inserting log record into Oracle...
+(
+echo connect %ORACLE_USER%/%ORACLE_PASSWORD%@%ORACLE_SID%
+echo INSERT INTO load_log (load_date, file_path^)
+echo VALUES (SYSDATE, '^%DEST_DIR%\%NEW_NAME%^');
+echo COMMIT;
+echo EXIT;
+) | sqlplus -s
+
+if %ERRORLEVEL% neq 0 (
+    echo Error inserting log record into Oracle.
+    exit /b 1
+)
+
+echo CSV file loaded, moved, and logged successfully.
+
+endlocal
+
+SQL*Loader Control File: load_csv.ctl
+
+LOAD DATA
+INFILE 'C:\path\to\your.csv'
+INTO TABLE csv_data
+FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
+(COLUMN1, COLUMN2, ...)
+
+How to Use:
+
+1. Save the batch script as load_and_log.bat.
+
+
+2. Replace C:\path\to\your.csv and C:\path\to\destination with the actual file paths.
+
+
+3. Replace username, password, and oraclesid with your Oracle credentials.
+
+
+4. Save the control file as load_csv.ctl and place it in the same directory as the batch file.
+
+
+5. Open Command Prompt as Administrator.
+
+
+6. Navigate to the directory where the batch file is located.
+
+
+7. Run the batch file:
+
+load_and_log.bat
+
+
+
+Would you like more guidance on any specific part of this process?
+
