@@ -1,0 +1,24 @@
+Objet : Finalisation du chargement de l'avenant T24
+
+Bonjour,
+
+Le chargement de l'avenant T24 a été complété avec succès. Vous trouverez en pièce jointe les fichiers correspondants pour vérification.
+
+Les tâches réalisées sont les suivantes :
+
+Création de 3 nouveaux assurés avec des noms et prénoms différents de ceux figurant sur ODS.
+
+Récupération des clés OPS des 3 derniers assurés créés.
+
+Écart des contrats inexistants sur ODS.
+
+Création des primes pour les périodes antérieures aux dates d'effet des contrats, avec modification des dates d'effet.
+
+Élimination des primes déjà identifiées comme payées sur ODS.
+
+
+N'hésitez pas à me faire part de vos retours ou à signaler toute anomalie.
+
+Cordialement,
+[Votre nom]
+
