@@ -1,0 +1,27 @@
+Rapport sur les Travaux Effectués sur la Base de Données
+1. Introduction 
+Dans le cadre du traitement des données reçues de notre partenaire CNEP à partir de leur ancien système bancaire D6, nous avons mis en place un processus permettant d’intégrer, d’analyser et de mettre à jour les informations relatives aux assurés, à leurs contrats ainsi qu’aux primes prélevées sur leurs comptes bancaires. Ce processus repose sur l’analyse des mouvements bancaires afin d’identifier et de traiter les transactions pertinentes.
+Ce rapport détaille les étapes effectuées, les problèmes rencontrés ainsi que les solutions mises en place pour assurer un traitement efficace et fiable des données.
+2. Processus de Traitement des Données
+2.1. Chargement des Données Clients et Contrats
+Les données assurés et leurs contrats sont reçues sous forme de fichiers et sont chargées dans une table temporaire en environnement de production.
+Cette table temporaire sert de base de comparaison pour identifier les différences entre l'état actuel de notre base de données et les nouvelles données reçues.
+2.2. Mise à Jour des Clients et Contrats
+Exécution de scripts SQL pour déterminer les écarts entre la base existante et la table temporaire.
+Identification et création des nouveaux clients et contrats non présents dans notre base de données.
+2.3. Chargement des Mouvements Bancaires
+En raison du volume important des données, les mouvements bancaires sont d'abord chargés dans une base de développement (BDD DEV) pour éviter de saturer la base de production.
+Une fois les données vérifiées et consolidées, elles sont intégrées dans la base de production.
+2.4. Complétion des Références CNEP
+Identification des références CNEP manquantes dans les mouvements.
+Recherche des informations manquantes dans d'autres colonnes et consolidation des soldes.
+Association des clients possédant un seul contrat à leur référence CNEP via le code OP SASDEB.
+2.5. Création des Décomptes de Primes
+Génération des décomptes de primes pour chaque contrat ayant des statuts d'impayés.
+Mise en place de vérifications et de validations pour garantir la cohérence des données.
+3. Problèmes Rencontrés et Solutions Apportées
+Saturation de la base de production : Utilisation d'une base intermédiaire (BDD DEV) pour traiter les mouvements bancaires avant intégration finale.
+Références CNEP manquantes : Implémentation d'une logique de recherche et de complétion à partir d'autres colonnes disponibles.
+Différences entre la base et les nouvelles données : Mise en place de scripts d'analyse et de comparaison précise avant toute modification.
+4. Conclusion Les travaux effectués ont permis une mise à jour efficace et précise des données clients, des contrats et des mouvements bancaires. Les améliorations apportées garantissent une meilleure intégration des données tout en minimisant les risques d'erreurs et de saturation de la base de production. Un suivi régulier est recommandé pour assurer la qualité et la cohérence des informations traitées.
+
