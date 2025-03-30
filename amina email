@@ -32,4 +32,9 @@ Cordialement,
 [Votre Nom]
 
 
+--------------------------------------------------------------------------------
+Syrta utilise un paramètre séquentiel incrémental pour chaque année lors de l’étape de déclaration de sinistre. Cependant, une anomalie s’est produite, soit en raison d’un problème au niveau de l’application, soit d’une perte de liaison avec celle-ci. En conséquence, l’application ne peut pas revenir à cette séquence en raison des contraintes de sécurité du réseau ou pour garantir son bon fonctionnement.  
+
+À ce stade, je sollicite ton engagement pour détecter ces `claim_uuid`, afin de pouvoir les attribuer au prochain dossier de sinistre déclaré avant son association avec ODS.
+
 
