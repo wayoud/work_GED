@@ -84,3 +84,39 @@ Bien cordialement,
 
 Tu veux une version plus formelle ou plus décontractée ?
 
+
+
+__&&&&&&&&&&
+Voici une version réécrite et plus claire de votre email :
+
+
+---
+
+Objet : Avancement des actions de sécurisation des systèmes ODS et SYRTA
+
+Bonjour,
+
+Dans le cadre du traitement des vulnérabilités identifiées sur nos systèmes locaux (ODS et SYRTA), nous avons déjà effectué les actions suivantes :
+
+Mise à jour de Java de la version 8 à la version 11 sur les serveurs A et B.
+
+Mise à jour d’Apache Tomcat de la version 9.0.72 à la version 9.0.102 (dernière version disponible à ce jour, sortie en mars 2025), avec adaptation de l’ensemble des configurations, des rapports et des certificats SSL sur les serveurs A, B et C.
+
+
+Les prochaines actions prévues sont :
+
+Application des correctifs de sécurité Oracle 19c.
+
+Collecte des anciennes versions (archives) en collaboration avec Mehdi, afin de les externaliser et de les supprimer des serveurs. Cette opération vise à éviter que ces anciennes versions n’apparaissent lors des prochains screenings de sécurité.
+
+
+Cordialement,
+[Votre nom]
+
+
+---
+
+Souhaitez-vous une version en anglais aussi ?
+
+
+
