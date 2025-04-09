@@ -1,4 +1,4 @@
-jeObjet : Corrections effectuées et mise à disposition des calculs
+ummmjeObjet : Corrections effectuées et mise à disposition des calculs
 
 Bonjour,
 
@@ -117,6 +117,40 @@ Cordialement,
 ---
 
 Souhaitez-vous une version en anglais aussi ?
+
+
+-------------------++++++++
+Voici une version réécrite et plus fluide de votre email :
+
+
+---
+
+Objet : Désinstallation des versions Java non utilisées
+
+Bonjour,
+
+Comme convenu lors de notre discussion d’hier, il est nécessaire de désinstaller les versions de Java non utilisées, selon les détails suivants :
+
+Java 8 sur le serveur A
+
+Java 17 sur le serveur B
+
+
+Afin d’assurer la traçabilité, nous devons sauvegarder les anciennes configurations de Tomcat. Vous trouverez, pour chaque serveur, une copie dans le dossier Temp, nommée tomcat9_nom_du_serveur.
+
+À noter : avant toute désinstallation, il est impératif de prendre un snapshot du serveur.
+
+Merci de me tenir informé une fois l’opération effectuée.
+
+Cordialement,
+[Votre nom]
+
+
+---
+
+Souhaitez-vous que je le reformule d'une façon plus technique ou plus formelle encore ?
+
+
 
 
 
