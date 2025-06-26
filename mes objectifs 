@@ -1,4 +1,4 @@
-Voici une version claire, professionnelle et bien structurée de vos objectifs, que vous pouvez envoyer à votre responsable :
+Bien sûr ! Voici la version en français avec l’objectif supplémentaire inclus :
 
 
 ---
@@ -7,31 +7,36 @@ Objectifs de montée en compétences et de contribution technique
 
 1. Maîtrise d’Oracle APEX
 
-Objectif : Acquérir les compétences nécessaires sur Oracle APEX afin de pouvoir intervenir efficacement sur les applications métiers existantes.
-Description : Cela permettra de corriger les bugs, modifier ou ajouter de nouvelles fonctionnalités en fonction des besoins des utilisateurs métiers.
+Objectif : Acquérir une expertise sur Oracle APEX afin de maintenir et faire évoluer les applications métiers existantes.
+Description : Cela permettra d’intervenir efficacement pour corriger des bugs, ajouter ou modifier des fonctionnalités selon les besoins des utilisateurs métiers.
 
 2. Apprentissage de JasperReports
 
-Objectif : Comprendre et utiliser JasperReports pour la gestion des rapports dans les applications existantes.
-Description : Être capable de modifier les rapports actuels ou d’en créer de nouveaux selon les exigences fonctionnelles.
+Objectif : Apprendre à utiliser JasperReports pour la gestion des rapports dans les applications existantes.
+Description : Être en mesure de modifier les rapports actuels ou d’en créer de nouveaux en fonction des exigences fonctionnelles.
 
 3. Automatisation des processus métier
 
 Objectif : Participer à l’automatisation de tâches récurrentes dans les applications internes.
-Description : Par exemple, automatiser le chargement de nouveaux produits, l'intégration de listes de décès dans l’ODS, ou encore la génération de synthèses de traitement.
+Description : Par exemple, automatiser le chargement de nouveaux produits, l’intégration des listes de décès dans l’ODS, ou la génération de synthèses de traitement.
 
 4. Développement des applications internes
 
-Objectif : Contribuer activement au développement des outils internes.
-Description : Intervenir en tant que développeur full stack (frontend, backend) et administrateur de base de données pour améliorer ou concevoir de nouvelles applications internes.
+Objectif : Contribuer activement au développement et à l’amélioration des outils internes.
+Description : Intervenir en tant que développeur full stack et administrateur de base de données pour concevoir ou faire évoluer les applications internes.
 
 5. Intégration de l’authentification Sésame
 
 Objectif : Intégrer le système d’authentification Sésame dans les applications existantes ou en cours de développement.
-Description : Assurer la conformité des applications avec les exigences de sécurité internes à travers cette méthode d’authentification.
+Description : Assurer la conformité des applications aux normes de sécurité internes à travers l’implémentation de cette méthode d’authentification.
+
+6. Documentation des processus existants et des interventions en production
+
+Objectif : Documenter de manière claire et structurée les processus liés aux applications ainsi que les différentes interventions en environnement de production.
+Description : Faciliter le partage de connaissances, garantir la traçabilité et améliorer la maintenabilité des applications en documentant les workflows, les opérations récurrentes et les résolutions de problèmes en production.
 
 
 ---
 
-Souhaitez-vous que je le convertisse aussi en format Word ou PDF ?
+Souhaitez-vous que je vous le mette en page dans un document Word ou PDF prêt à envoyer ?
 
