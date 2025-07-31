@@ -18,4 +18,32 @@ Cordialement,
 ---
 
 N'hésitez pas à me dire si des ajustements sont nécessaires.
+______________
+Bien sûr, voici une version réécrite, plus claire et professionnelle de ton email :
+
+
+---
+
+Objet : Reprise du chargement des données depuis mars 2025
+
+Bonjour Isma,
+
+Pour les mois déjà chargés sur ODS depuis mars 2025, il est nécessaire de supprimer les données de la base, puis de relancer le chargement des mois de mars à mai 2025. Attention, il ne faut pas envoyer les nouveaux assurés vers Sybal lors de ce rechargement.
+
+Tu trouveras les différentes extractions à utiliser dans le répertoire suivant : C:/backup.
+
+Peux-tu, s’il te plaît, vérifier les données avant de procéder à la suppression ?
+
+Une fois le rechargement des mois de mars, avril et mai effectué, il faudra réactiver le lien avec Sybal pour le screening. Par ailleurs, merci de me confirmer si la suppression des opérations entraîne ou non la suppression automatique sur Sahti.
+
+Merci d’avance pour ton retour.
+
+Bien cordialement,
+[Ta signature]
+
+
+---
+
+Souhaites-tu que je le reformule encore plus brièvement ou que j’y ajoute des détails techniques spécifiques ?
+
 
