@@ -1,0 +1,174 @@
+تمام يا وايود—هذه خطة “أين وماذا أفعل” خطوة بخطوة لإزالة الخطأ وربط Pentaho مع Oracle بطريقة مضمونة. أعطيك مسارين: لينكس (الأغلب عند خوادم Oracle) ثم ويندوز. نفّذ المسار المناسب لبيئتك.
+
+
+---
+
+أولًا: على خادم Linux
+
+1) تأكد من نسخة الجافا التي يستخدمها Oracle
+
+نفّذ بالأكount الذي يشغّل الـ Scheduler (غالبًا oracle):
+
+sudo -u oracle bash -lc 'java -version'
+
+يجب أن ترى Java 17. إن ظهرت Java 8 أو أقل → ثبّت Java 17.
+
+
+2) تثبيت Java 17 (إن لزم)
+
+Debian/Ubuntu:
+
+
+sudo apt-get update
+sudo apt-get install -y openjdk-17-jdk
+
+RHEL/CentOS/Oracle Linux:
+
+
+sudo yum install -y java-17-openjdk
+
+احفظ مسار الجافا (عادةً مثل /usr/lib/jvm/java-17-openjdk).
+
+3) أنشئ سكربت وسيط يضمن استخدام Java 17
+
+افترض أن PDI في /opt/pdi/data-integration، وعدّل المسارات لما يناسبك:
+
+sudo tee /opt/pdi/run_ktr.sh >/dev/null <<'SH'
+#!/bin/bash
+set -e
+
+# 1) اضبط جافا 17
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk
+export PATH="$JAVA_HOME/bin:$PATH"
+
+# 2) مسارات Pentaho والملف المراد تنفيذه
+PDI_DIR="/opt/pdi/data-integration"
+KTR="/opt/pdi/jobs/your_transformation.ktr"   # أو KJB لِـ Job
+
+# 3) لوج للتتبع
+LOG_DIR="/var/log/pdi"; mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/ktr.log"
+{
+  echo "==== $(date) ===="
+  echo "[INFO] Using JAVA_HOME=$JAVA_HOME"
+  java -version
+  echo "[INFO] Starting Kitchen..."
+} >> "$LOG_FILE" 2>&1
+
+# 4) نفّذ Kitchen مع نفس الجافا
+"$PDI_DIR/kitchen.sh" -file="$KTR" -level=Basic >> "$LOG_FILE" 2>&1
+SH
+sudo chmod +x /opt/pdi/run_ktr.sh
+
+4) اختبر يدويًا بنفس مستخدم Oracle
+
+sudo -u oracle /opt/pdi/run_ktr.sh
+
+إن اشتغل التحويل بدون خطأ “--add-opens”، فأنت جاهز للربط مع Oracle.
+
+افتح /var/log/pdi/ktr.log وتأكد أنّ java -version تُظهر Java 17.
+
+
+5) اربط السكربت مع Oracle Scheduler
+
+BEGIN
+  DBMS_SCHEDULER.create_job(
+    job_name        => 'PDI_RUN_KTR',
+    job_type        => 'EXECUTABLE',
+    job_action      => '/opt/pdi/run_ktr.sh',
+    enabled         => TRUE,
+    auto_drop       => FALSE,
+    comments        => 'Run Pentaho KTR with Java 17 wrapper'
+  );
+END;
+/
+
+> إذا كان لديك Job موجود، غيّر فقط job_action ليشير إلى /opt/pdi/run_ktr.sh.
+
+
+
+6) (اختياري) إن لم تستطع تثبيت Java 17 – حل مؤقت
+
+افتح ملفات:
+
+/opt/pdi/data-integration/kitchen.sh
+/opt/pdi/data-integration/pan.sh
+/opt/pdi/data-integration/spoon.sh
+
+وابحث عن أي أسطر فيها --add-opens= أو PENTAHO_JAVA_OPTIONS، وعلّقها (#).
+⚠️ هذا حل مؤقت وقد يسبب مشاكل أخرى. الأفضل دائمًا Java 17.
+
+
+---
+
+ثانيًا: على نظام Windows
+
+1) ثبّت JDK 17 واضبط المسار
+
+ثبّت JDK 17 ثم أنشئ سكربت وسيط مثلًا: C:\pdi\run_ktr.bat
+
+
+@echo off
+setlocal
+REM 1) اضبط Java 17
+set "JAVA_HOME=C:\Program Files\Java\jdk-17"
+set "PATH=%JAVA_HOME%\bin;%PATH%"
+
+REM 2) مسارات Pentaho والملف
+set "PDI_DIR=C:\pdi\data-integration"
+set "KTR=C:\pdi\jobs\your_transformation.ktr"
+set "LOG=C:\pdi\logs\ktr.log"
+
+if not exist "C:\pdi\logs" mkdir "C:\pdi\logs"
+
+echo ==== %date% %time% ==== >> "%LOG%"
+java -version >> "%LOG%" 2>&1
+"%PDI_DIR%\Kitchen.bat" /file="%KTR%" /level=Basic >> "%LOG%" 2>&1
+endlocal
+
+2) اختبر يدويًا
+
+انقر مرتين على run_ktr.bat أو شغّله من CMD. تأكد في اللوج أن java -version = 17 وأن التنفيذ يتم دون خطأ “--add-opens”.
+
+3) اربطه مع Oracle Scheduler على ويندوز
+
+(قد تحتاج Credential لتحديد المستخدم الذي يشغّل العملية)
+
+BEGIN
+  DBMS_SCHEDULER.create_credential(
+    credential_name => 'PDI_CRED',
+    username        => 'DOMAIN\WindowsUser',
+    password        => 'StrongPassword'
+  );
+
+  DBMS_SCHEDULER.create_job(
+    job_name        => 'PDI_RUN_KTR_WIN',
+    job_type        => 'EXECUTABLE',
+    job_action      => 'C:\pdi\run_ktr.bat',
+    credential_name => 'PDI_CRED',
+    enabled         => TRUE,
+    auto_drop       => FALSE
+  );
+END;
+/
+
+4) حل مؤقت إن تعذر Java 17
+
+افتح Kitchen.bat, Pan.bat, Spoon.bat داخل data-integration واحذف/علّق أي --add-opens=.... (غير مُستحسن إلا كحل مؤقت).
+
+
+---
+
+نقاط تحكم سريعة (Checkpoints)
+
+اللوج يجب أن يظهر Java 17 قبل تشغيل Kitchen.
+
+لا تستدعِ kitchen.sh/.bat مباشرة من Oracle؛ دائمًا استدعِ السكربت الوسيط الذي يضبط JAVA_HOME.
+
+استخدم مسارات كاملة (Absolute Paths) للملفات والمجلدات.
+
+أعطِ صلاحيات تنفيذ للسكربت على لينكس: chmod +x.
+
+
+لو تحب، أكتب لي المسارات الفعلية عندك (مكان PDI، مكان JDK 17، واسم الـ KTR/KJB)، وأنا أرجّع لك السكربت جاهزًا بنسخة مخصّصة لك.
+
