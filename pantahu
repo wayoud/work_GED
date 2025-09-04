@@ -172,3 +172,27 @@ END;
 
 لو تحب، أكتب لي المسارات الفعلية عندك (مكان PDI، مكان JDK 17، واسم الـ KTR/KJB)، وأنا أرجّع لك السكربت جاهزًا بنسخة مخصّصة لك.
 
+
+
+@echo off
+REM =======================================================
+REM Pentaho Data Integration - Pan
+REM =======================================================
+
+REM *************** JAVA HOME CONFIG ********************
+if "%JAVA_HOME%"=="" (
+  echo JAVA_HOME not set! Please set JAVA_HOME environment variable to point to your Java installation.
+  exit /b 1
+)
+
+set PENTAHO_JAVA=%JAVA_HOME%\bin\java.exe
+
+REM *************** MEMORY SETTINGS *********************
+set OPT=-Xms1024m -Xmx2048m --add-opens=java.base/java.lang=ALL-UNNAMED
+
+REM *************** CLASSPATH ***************************
+set CLASSPATH=.;lib\*
+
+REM *************** LAUNCH ******************************
+"%PENTAHO_JAVA%" %OPT% -cp "%CLASSPATH%" org.pentaho.di.pan.Pan %*
+
