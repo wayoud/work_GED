@@ -1,0 +1,26 @@
+Bonjour,
+
+Les vulnérabilités de sécurité ont été traitées sur tous les serveurs des applications A et B en suivant les étapes suivantes :
+
+1. Classification des fichiers affectés en deux catégories :
+
+Fichiers pouvant être supprimés, qui ont été déplacés vers la corbeille.
+
+Fichiers nécessaires au bon fonctionnement du système.
+
+
+
+2. Mise à jour de l’hôte de l’application Tomcat vers la dernière version stable, avec configuration et ajustements nécessaires.
+
+
+3. Mise à jour de l’outil de chargement des données, accompagnée d’un paramétrage adéquat.
+
+
+4. Application des mises à jour sur la base de données afin de renforcer la sécurité et d’assurer une meilleure stabilité du système.
+
+
+
+Les prochaines étapes prévues sont :
+5. Déploiement et exécution des nouvelles mises à jour sur les serveurs.
+6. Étude de la possibilité de suppression des fichiers SWO pour optimiser l’espace et la sécurité du système.
+
