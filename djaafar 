@@ -1,0 +1,34 @@
+Voici la version révisée avec l’ajout du protocole et du port utilisés :
+
+
+---
+
+Objet : Description des interactions entre les applications métiers (ODS, Syrta et Sybal)
+
+Les échanges entre les applications métiers ODS, Syrta et Sybal s’effectuent via des database links Oracle 19c, en utilisant le protocole TCP/IP sur le port 1521.
+
+Entre Sybal et ODS
+À la fin de chaque chargement et traitement de production des produits d’assurance, ODS transfère les nouvelles assurances ainsi que les modifications sur les assurés vers des tables exploitées par Sybal pour effectuer les opérations de screening.
+
+Entre Syrta et Sybal
+Syrta fait appel à Sybal pour réaliser le screening des assurés à deux niveaux :
+
+Niveau 1 : lors de la phase de déclaration,
+
+Niveau 2 : lors de la phase de prise de décision.
+
+
+Entre Syrta et ODS
+Syrta interagit avec ODS afin de consulter l’état des contrats durant la phase de déclaration, d’effectuer les calculs liés aux décomptes, paiements et garanties, ainsi que pour ajouter les dates de décès sur ODS après déclaration.
+
+Entre ODS et la vue Images
+ODS sauvegarde l’état de production à la fin de chaque clôture actuarielle.
+
+
+Toutes ces interactions sont sécurisées par les mécanismes d’authentification Oracle et reposent sur des connexions réseau internes au système d’information.
+
+
+---
+
+Souhaites-tu que j’y ajoute aussi le type d’authentification Oracle utilisé (par exemple : SERVICE_NAME, SID, ou authentification par compte applicatif) ?
+
