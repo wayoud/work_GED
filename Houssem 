@@ -1,0 +1,85 @@
+Perfect ✅ Here’s the enhanced version of your .bat script — it automatically names the Excel file with today’s date (e.g. result_2025-10-29.xlsx).
+
+
+---
+
+🧾 extract_to_excel.bat
+
+@echo off
+setlocal enabledelayedexpansion
+
+:: === Input and output files ===
+set "input=data.txt"
+set "csv=data.csv"
+
+:: === Generate date string (YYYY-MM-DD) ===
+for /f "tokens=2-4 delims=/.- " %%a in ('date /t') do (
+    set "day=%%a"
+    set "month=%%b"
+    set "year=%%c"
+)
+:: Handle different regional formats (if day is 2025 for example)
+if "%year%"=="" (
+    for /f "tokens=1-3 delims=/.- " %%a in ('date /t') do (
+        set "year=%%a"
+        set "month=%%b"
+        set "day=%%c"
+    )
+)
+set "today=%year%-%month%-%day%"
+set "xlsx=result_%today%.xlsx"
+
+if not exist "%input%" (
+    echo Input file "%input%" not found.
+    pause
+    exit /b
+)
+
+echo Name,RIP,Montant > "%csv%"
+
+:: === Read and extract fields by position ===
+for /f "usebackq delims=" %%A in ("%input%") do (
+    set "line=%%A"
+    set "name=!line:~0,14!"
+    set "rip=!line:~16,27!"
+    set "montant=!line:~44,21!"
+
+    :: Trim spaces
+    for /f "tokens=* delims= " %%n in ("!name!") do set "name=%%n"
+    for /f "tokens=* delims= " %%r in ("!rip!") do set "rip=%%r"
+    for /f "tokens=* delims= " %%m in ("!montant!") do set "montant=%%m"
+
+    :: Ignore if RIP is empty
+    if not "!rip!"=="" (
+        echo !name!,!rip!,!montant! >> "%csv%"
+    )
+)
+
+echo CSV created: "%csv%"
+echo Converting to Excel: "%xlsx%" ...
+
+:: === Convert CSV to Excel (.xlsx) using PowerShell ===
+powershell -command ^
+    "$excel = New-Object -ComObject Excel.Application; " ^
+    "$excel.Visible = $false; " ^
+    "$wb = $excel.Workbooks.Open((Resolve-Path '%cd%\%csv%')); " ^
+    "$wb.SaveAs((Resolve-Path '%cd%\%xlsx%'), 51); " ^
+    "$wb.Close($false); " ^
+    "$excel.Quit();"
+
+echo Done! Excel file saved as "%xlsx%"
+pause
+
+
+---
+
+✅ Example output
+
+If today is October 29, 2025, the file will be named:
+
+result_2025-10-29.xlsx
+
+
+---
+
+Would you like me to make it automatically delete the temporary data.csv after generating the Excel file (to keep the folder clean)?
