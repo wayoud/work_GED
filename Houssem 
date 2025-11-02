@@ -74,7 +74,82 @@ pause
 ---
 
 ✅ Example output
+Perfect — I see exactly what’s happening here 👇
 
+The problem is the path contains spaces (OneDrive - BNP Paribas), and your PowerShell command doesn’t quote paths correctly.
+In a batch file, when passing quoted strings into PowerShell, you need escaped quotes (\") inside the PowerShell command.
+
+Let’s fix your .bat file step by step ✅
+
+
+---
+
+✅ Corrected Batch Script
+
+@echo off
+setlocal
+
+:: Define file names
+set "csv=data.csv"
+set "xlsx=result_%date:~0,2%-%date:~3,2%-%date:~6,4%.xlsx"
+
+echo CSV created: "%csv%"
+echo Converting to Excel: "%xlsx%"
+
+::=== Convert CSV to Excel (.xlsx) using PowerShell ===
+powershell -NoProfile -Command ^
+  "$excel = New-Object -ComObject Excel.Application; " ^
+  "$excel.Visible = $false; " ^
+  "$csvPath = Resolve-Path \"%cd%\%csv%\"; " ^
+  "$xlsxPath = Join-Path (Get-Location) \"%xlsx%\"; " ^
+  "$wb = $excel.Workbooks.Open($csvPath); " ^
+  "$wb.SaveAs($xlsxPath, 51); " ^
+  "$wb.Close($false); " ^
+  "$excel.Quit();"
+
+echo Done.
+pause
+
+
+---
+
+🧠 Key Fixes Explained
+
+1. Proper PowerShell call:
+powershell -NoProfile -Command is the correct syntax — not powershell-command.
+
+
+2. Quoted paths:
+I wrapped the file paths in escaped quotes (\") to handle spaces correctly ("OneDrive - BNP Paribas").
+
+
+3. Using Join-Path:
+Safer than Resolve-Path for non-existent output files.
+
+
+4. 51 Excel format:
+This is the correct code for .xlsx output (Excel Open XML Workbook).
+
+
+5. Added pause:
+So you can read the console output before it closes.
+
+
+
+
+---
+
+✅ Example Output
+
+CSV created: "data.csv"
+Converting to Excel: "result_02-11-2025.xlsx"
+Done.
+Press any key to continue . . .
+
+
+---
+
+Would you like me to make it automatically check if Excel is installed and show a friendly message if not? (Useful for deployment.)
 If today is October 29, 2025, the file will be named:
 
 result_2025-10-29.xlsx
@@ -83,3 +158,4 @@ result_2025-10-29.xlsx
 ---
 
 Would you like me to make it automatically delete the temporary data.csv after generating the Excel file (to keep the folder clean)?
+###$$$$$$$
