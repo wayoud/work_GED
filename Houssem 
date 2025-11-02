@@ -242,3 +242,80 @@ Conversion complete.
 If it still doesn’t appear, please tell me what the PowerShell lines say (those that start with “Opening:” and “Saving as:”), and I’ll pinpoint the exact cause.
 
 Would you like me to make it overwrite the file automatically if it already exists (instead of Excel prompting silently)?
+#############$#
+
+Perfect 👍 thanks for confirming — you’re running it from CMD, not by double-clicking the .bat.
+
+That’s an important detail because when you run from CMD, %cd% is the current directory, not necessarily where the .bat file is.
+If you want the .xlsx to always appear in the same folder as the .bat, even when you launch it from another path, you should use %~dp0 (the batch variable for “directory of this script”).
+
+Here’s the exact version that will work perfectly in CMD 👇
+
+
+---
+
+✅ Final CMD-Safe Batch Script
+
+@echo off
+setlocal
+
+::=== Always work in the folder where this script is ===
+cd /d "%~dp0"
+
+::=== Define file names ===
+set "csv=data.csv"
+set "xlsx=result_%date:~0,2%-%date:~3,2%-%date:~6,4%.xlsx"
+
+echo CSV created: "%cd%\%csv%"
+echo Converting to Excel: "%cd%\%xlsx%"
+
+::=== Convert CSV to Excel (.xlsx) using PowerShell ===
+powershell -NoProfile -Command ^
+  "$excel = New-Object -ComObject Excel.Application; " ^
+  "$excel.Visible = $false; " ^
+  "$csvPath = '%cd%\%csv%'; " ^
+  "$xlsxPath = '%cd%\%xlsx%'; " ^
+  "Write-Host 'Opening:' $csvPath; " ^
+  "$wb = $excel.Workbooks.Open($csvPath); " ^
+  "Write-Host 'Saving as:' $xlsxPath; " ^
+  "$wb.SaveAs($xlsxPath, 51); " ^
+  "$wb.Close($false); " ^
+  "$excel.Quit(); " ^
+  "Write-Host 'Conversion complete.'"
+
+echo Done.
+pause
+
+
+---
+
+🧭 How to run it correctly
+
+1. Open CMD anywhere (for example, C:\Users\h34667>).
+
+
+2. Navigate to your script folder, or just run the .bat by full path, e.g.:
+
+"C:\Users\h34667\OneDrive - BNP Paribas\Documents\test\data_pro.bat"
+
+
+3. You’ll see messages like:
+
+Opening: C:\Users\h34667\OneDrive - BNP Paribas\Documents\test\data.csv
+Saving as: C:\Users\h34667\OneDrive - BNP Paribas\Documents\test\result_02-11-2025.xlsx
+Conversion complete.
+
+
+4. The Excel file should appear in the same folder as your .bat and .csv.
+
+
+
+
+---
+
+If you still don’t see the .xlsx, please copy-paste what appears in CMD after the lines:
+
+Opening: ...
+Saving as: ...
+
+That’ll let me pinpoint the final missing step (it could be permissions, Excel version, or OneDrive sync timing).
