@@ -158,4 +158,87 @@ result_2025-10-29.xlsx
 ---
 
 Would you like me to make it automatically delete the temporary data.csv after generating the Excel file (to keep the folder clean)?
-###$$$$$$$
+###$$$$$$
+$$____
+Excellent — that’s real progress 👏
+If there’s no .xlsx file generated even though the command ran without an error, it usually means Excel opened the CSV but didn’t save properly (often due to path or permissions).
+
+Let’s fix this precisely 👇
+
+
+---
+
+✅ Improved and Reliable Version
+
+This one ensures the file is saved in the same folder as your .bat file.
+
+@echo off
+setlocal
+
+::=== Define current directory ===
+set "workdir=%~dp0"
+
+::=== Define file names ===
+set "csv=%workdir%data.csv"
+set "xlsx=%workdir%result_%date:~0,2%-%date:~3,2%-%date:~6,4%.xlsx"
+
+echo CSV created: "%csv%"
+echo Converting to Excel: "%xlsx%"
+
+::=== Convert CSV to Excel (.xlsx) using PowerShell ===
+powershell -NoProfile -Command ^
+  "$excel = New-Object -ComObject Excel.Application; " ^
+  "$excel.Visible = $false; " ^
+  "$csvPath = '%csv%'; " ^
+  "$xlsxPath = '%xlsx%'; " ^
+  "Write-Host 'Opening:' $csvPath; " ^
+  "$wb = $excel.Workbooks.Open($csvPath); " ^
+  "Write-Host 'Saving as:' $xlsxPath; " ^
+  "$wb.SaveAs($xlsxPath, 51); " ^
+  "$wb.Close($false); " ^
+  "$excel.Quit(); " ^
+  "Write-Host 'Conversion complete.'"
+
+echo Done.
+pause
+
+
+---
+
+🔍 Key Improvements
+
+%~dp0 ensures paths point to the folder containing your .bat file, not where CMD is launched from.
+
+No Resolve-Path — because the output file doesn’t exist yet, and that causes issues.
+
+Debug messages show what paths Excel is actually using.
+
+
+
+---
+
+🧪 Test checklist
+
+1. Put your .bat file and data.csv in the same folder.
+
+
+2. Run the .bat file by double-clicking it (not from a different path).
+
+
+3. Watch the PowerShell output — you should see:
+
+Opening: C:\Users\h34667\OneDrive - BNP Paribas\Documents\test\data.csv
+Saving as: C:\Users\h34667\OneDrive - BNP Paribas\Documents\test\result_02-11-2025.xlsx
+Conversion complete.
+
+
+4. After it says Done, check the same folder for your .xlsx.
+
+
+
+
+---
+
+If it still doesn’t appear, please tell me what the PowerShell lines say (those that start with “Opening:” and “Saving as:”), and I’ll pinpoint the exact cause.
+
+Would you like me to make it overwrite the file automatically if it already exists (instead of Excel prompting silently)?
