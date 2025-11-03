@@ -1,3 +1,85 @@
-Bonjour mon amour 🌞💛
-Je te souhaite une belle journée pleine de sourires et de bonnes nouvelles.
-Que cette journée t’apporte tout ce que ton cœur désire 💐
+Sure ✅ — here’s a simple and working .bat (batch) script that converts a .csv file to .xlsx using PowerShell and Excel COM automation.
+
+
+---
+
+💾 ConvertCSVtoXLSX.bat
+
+@echo off
+setlocal
+
+::=== Ask user or define CSV file path ===
+set "csvFile=example.csv"
+set "xlsxFile=%~dpn1.xlsx"
+
+:: If user provides CSV as argument, use it
+if not "%~1"=="" (
+    set "csvFile=%~1"
+    set "xlsxFile=%~dpn1.xlsx"
+)
+
+::=== Check if CSV exists ===
+if not exist "%csvFile%" (
+    echo CSV file not found: "%csvFile%"
+    pause
+    exit /b
+)
+
+echo.
+echo === Converting "%csvFile%" to "%xlsxFile%" ===
+
+::=== PowerShell script to convert CSV -> XLSX ===
+powershell -NoLogo -NoProfile -Command ^
+    "$excel = New-Object -ComObject Excel.Application; " ^
+    "$excel.Visible = $false; " ^
+    "$wb = $excel.Workbooks.Open((Resolve-Path '%csvFile%')); " ^
+    "$wb.SaveAs((Resolve-Path '%xlsxFile%'), 51); " ^
+    "$wb.Close($false); " ^
+    "$excel.Quit(); " ^
+    "[System.Runtime.Interopservices.Marshal]::ReleaseComObject($wb) | Out-Null; " ^
+    "[System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null;"
+
+if exist "%xlsxFile%" (
+    echo ✅ Conversion complete!
+    echo File saved as: "%xlsxFile%"
+) else (
+    echo ❌ Conversion failed!
+)
+
+pause
+endlocal
+
+
+---
+
+🧠 How to use:
+
+1. Copy the code above into a file named ConvertCSVtoXLSX.bat.
+
+
+2. Put it in the same folder as your .csv file (or anywhere you want).
+
+
+3. Run it in Command Prompt like:
+
+ConvertCSVtoXLSX.bat mydata.csv
+
+
+4. You’ll get mydata.xlsx in the same folder.
+
+
+
+
+---
+
+⚙️ Requirements:
+
+Windows with Microsoft Excel installed (the COM object uses Excel).
+
+CSV file encoded in UTF-8 or ANSI.
+
+
+
+---
+
+Would you like me to make a version that doesn’t require Excel installed (using PowerShell module or Python instead)?
