@@ -1,0 +1,117 @@
+Perfect 👌 here’s how to make your **`.bat` file** that automatically runs the Python script to extract your data and generate the Excel file.
+
+---
+
+### 🪄 Step 1 — Save the Python Script
+
+Create a file named **`extract_txt_to_excel.py`** in the same folder as your text file (`data.txt`), and paste this content:
+
+```python
+import pandas as pd
+
+input_file = "data.txt"
+output_file = "output.xlsx"
+
+records = []
+
+# Read all lines
+with open(input_file, "r", encoding="utf-8") as f:
+    lines = f.readlines()
+
+# Skip first and last line
+lines = lines[1:-1]
+
+for line in lines:
+    name = line[0:14].strip()
+    rip = line[16:43].strip()
+    montant = line[44:65].strip()
+    code = line[53:57].strip()  # positions 54–57 (Python is 0-based)
+
+    # Ignore lines where RIP is empty
+    if not rip:
+        continue
+
+    # Determine Banque
+    if code == "199":
+        banque = "CNEP"
+    elif code == "233":
+        banque = "BNP"
+    else:
+        banque = ""
+
+    records.append({
+        "Nom": name,
+        "RIP": rip,
+        "Montant": montant,
+        "Banque": banque
+    })
+
+df = pd.DataFrame(records, columns=["Nom", "RIP", "Montant", "Banque"])
+
+# Export to Excel
+with pd.ExcelWriter(output_file, engine="openpyxl") as writer:
+    df.to_excel(writer, index=False, sheet_name="Data")
+
+    sheet = writer.sheets["Data"]
+    for column_cells in sheet.columns:
+        for cell in column_cells:
+            cell.number_format = "@"
+
+print(f"✅ Extraction done successfully. File saved as: {output_file}")
+```
+
+---
+
+### 🪄 Step 2 — Create the `.bat` File
+
+Create another file in the same folder named **`run_extraction.bat`** and paste this:
+
+```bat
+@echo off
+echo ----------------------------------------
+echo TXT to Excel Extraction Started...
+echo ----------------------------------------
+
+REM Change directory to where this script is located
+cd /d "%~dp0"
+
+REM Check if Python is installed
+python --version >nul 2>&1
+if errorlevel 1 (
+    echo ❌ Python is not installed or not in PATH.
+    pause
+    exit /b
+)
+
+REM Run the Python script
+python extract_txt_to_excel.py
+
+echo ----------------------------------------
+echo ✅ Extraction completed! Check output.xlsx
+echo ----------------------------------------
+pause
+```
+
+---
+
+### 🧩 Step 3 — Folder Structure Example
+
+```
+C:\MyFolder\
+│
+├── data.txt
+├── extract_txt_to_excel.py
+└── run_extraction.bat
+```
+
+---
+
+### 🧠 How to Use
+
+1. Double-click **`run_extraction.bat`**.
+2. It will read **`data.txt`**, process it, and generate **`output.xlsx`**.
+3. Leading zeros are preserved, first and last lines are skipped, and the `Banque` column is auto-filled.
+
+---
+
+Would you like me to modify the `.bat` so it automatically processes **all `.txt` files in the folder** instead of just one?
