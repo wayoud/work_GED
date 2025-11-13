@@ -319,3 +319,67 @@ Opening: ...
 Saving as: ...
 
 That’ll let me pinpoint the final missing step (it could be permissions, Excel version, or OneDrive sync timing).
+_______________________________________________________________________
+@echo off
+setlocal enabledelayedexpansion
+
+set "input=VIR_A_IMPORT.txt"
+set "output=data.csv"
+
+if not exist "%input%" (
+    echo ❌ Input file "%input%" not found!
+    pause
+    exit /b
+)
+
+if exist "%output%" del "%output%"
+
+echo Numero Du Compte Donneur ordre;Code Swift De La Banque Donneuse order;Nom De la Contrepartie;Numero De Compte De La Contrepartie;Pays Ou Emplacement de la Contrepartie;Pays Ou Emplacement de la banque de la Contrepartie;Devise De instruction;Information De La Remise;Banque > "%output%"
+
+set "Compte=0270078000016380011"
+set "Swift=BNPDZALXXX"
+set "Pays=DZ"
+set "Devise=DZD"
+set "Info=Mutuelle Cardif"
+
+rem Count total lines
+set /a count=0
+for /f "usebackq delims=" %%A in ("%input%") do (
+    set /a count+=1
+    echo %%A>>temp.txt
+)
+
+set /a total=%count%
+set /a current=0
+
+rem Process lines except first and last
+for /f "usebackq delims=" %%A in ("temp.txt") do (
+    set /a current+=1
+    if !current! gtr 1 if !current! lss %total% (
+        set "line=%%A"
+
+        rem Extract substrings (fixed positions)
+        set "Nom=!line:~0,14!"
+        set "Rip=!line:~16,27!"
+        set "Montant=!line:~44,21!"
+        set "Code=!line:~53,4!"
+        set "NomContrepartie=!line:~30,24!"
+        set "CompteContrepartie=!line:~55,20!"
+        set "MontantInstruction=!line:~103,13!"
+        set "Banque="
+
+        if "!Code!"=="027" set "Banque=BNP ED"
+        if "!Code!"=="911" set "Banque=CNEP"
+
+        >>"%output%" echo %Compte%;%Swift%;!NomContrepartie!;!CompteContrepartie!;%Pays%;%Pays%;%Devise%;%Info%;!Banque!
+    )
+)
+
+del temp.txt
+
+echo ----------------------------------------
+echo ✅ Extraction completed successfully!
+echo File created: %output%
+echo ----------------------------------------
+pause
+
