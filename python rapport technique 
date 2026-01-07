@@ -1,0 +1,383 @@
+Rapport technique
+
+Standardisation de l’environnement Python et intégration avec Oracle APEX sous Windows
+
+
+---
+
+1. Introduction
+
+Ce rapport a pour objectif de définir un cadre technique clair et standardisé pour le développement et l’exploitation de scripts Python dédiés au traitement des données, au sein de l’entreprise, sur système Windows.
+
+La solution proposée vise à :
+
+Garantir l’exécution des mêmes codes chez tous les collaborateurs
+
+Éviter les problèmes liés aux اختلافات de versions Python et de bibliothèques
+
+Faciliter le partage, la maintenance et l’industrialisation des scripts
+
+Permettre l’intégration contrôlée avec Oracle APEX
+
+
+⚠️ Conformément à la politique interne, l’utilisation d’Anaconda est interdite. Seul Python officiel est autorisé.
+
+
+---
+
+2. Périmètre d’application
+
+Système d’exploitation : Windows 10 / Windows 11
+
+Langage : Python
+
+Cas d’usage : traitement de données, automatisation, intégration applicative
+
+Plateforme cible : Oracle APEX
+
+
+
+---
+
+3. Standardisation de la version Python
+
+3.1 Version officielle
+
+Une seule version de Python est autorisée pour l’ensemble de l’entreprise.
+
+Version recommandée : Python 3.10.x
+
+
+3.2 Installation
+
+Depuis le site officiel : python.org
+
+Ou depuis un dépôt interne validé par l’IT
+
+
+3.3 Vérification
+
+python --version
+
+🚫 Toute autre version est interdite.
+
+
+---
+
+4. Environnement virtuel (Virtual Environment)
+
+4.1 Principe
+
+Chaque projet Python doit être isolé dans un environnement virtuel dédié afin d’éviter les conflits de dépendances.
+
+Installation globale de bibliothèques interdite
+
+Un environnement par projet
+
+
+4.2 Création de l’environnement
+
+python -m venv .venv
+
+4.3 Activation (Windows)
+
+.venv\Scripts\activate
+
+📌 Le nom .venv est obligatoire et standardisé.
+
+
+---
+
+5. Gestion des bibliothèques Python
+
+5.1 Fichier de référence
+
+Le fichier requirements.txt constitue l’unique source de vérité pour les dépendances.
+
+Exemple :
+
+pandas==2.1.4
+numpy==1.26.3
+matplotlib==3.8.2
+scikit-learn==1.4.0
+pyyaml==6.0.1
+
+5.2 Installation des dépendances
+
+pip install -r requirements.txt
+
+🚫 Toute installation hors de ce fichier est interdite.
+
+
+---
+
+6. Uniformisation de pip
+
+Afin de garantir une résolution identique des dépendances :
+
+python -m pip install --upgrade pip==23.3.1
+
+
+---
+
+7. Structure standard des projets
+
+project-name/
+│── .venv/              (non versionné)
+│── src/
+│── tests/
+│── data/
+│── logs/
+│── requirements.txt
+│── README.md
+│── .gitignore
+
+.gitignore
+
+.venv/
+__pycache__/
+*.pyc
+
+
+---
+
+8. Gestion du code source (Git)
+
+Dépôt Git unique et officiel
+
+Travail via branches
+
+Revue de code obligatoire avant fusion
+
+
+📌 Tout code doit fonctionner après :
+
+pip install -r requirements.txt
+
+
+---
+
+9. Bonnes pratiques de développement
+
+Utilisation de pathlib pour les chemins
+
+Interdiction des chemins codés en dur
+
+Fonctions claires et documentées
+
+Docstrings obligatoires
+
+
+Exemple :
+
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent
+
+
+---
+
+10. Tests
+
+Des tests simples sont obligatoires avant toute intégration.
+
+pytest
+
+
+---
+
+11. Documentation
+
+Chaque projet doit contenir un fichier README.md précisant :
+
+Les étapes d’installation
+
+La procédure d’exécution
+
+Des exemples d’utilisation
+
+
+
+---
+
+12. Intégration avec Oracle APEX
+
+12.1 Principe général
+
+Oracle APEX ne lance pas directement Python. L’exécution se fait via :
+
+Oracle APEX → DBMS_SCHEDULER → Fichier BAT → Environnement .venv → Script Python
+
+
+---
+
+13. Organisation des scripts pour APEX
+
+C:\python_jobs\
+│── project-data\
+│   │── .venv\
+│   │── src\
+│   │   └── main.py
+│   │── logs\
+│   │── requirements.txt
+│   │── run_job.bat
+
+
+---
+
+14. Fichier BAT de lancement
+
+Exemple : run_job.bat
+
+@echo off
+
+call C:\python_jobs\project-data\.venv\Scripts\activate.bat
+cd /d C:\python_jobs\project-data
+python src\main.py >> logs\job.log 2>&1
+deactivate
+
+Ce fichier assure :
+
+L’activation de la bonne البيئة Python
+
+La journalisation des résultats
+
+L’exécution contrôlée du script
+
+
+
+---
+
+15. Exemple de script Python
+
+from datetime import datetime
+
+def main():
+    print(f"Job started at {datetime.now()}")
+    print("Processing completed successfully")
+
+if __name__ == "__main__":
+    main()
+
+
+---
+
+16. Lancement depuis Oracle (DBMS_SCHEDULER)
+
+BEGIN
+  DBMS_SCHEDULER.create_job (
+    job_name   => 'RUN_PYTHON_JOB',
+    job_type   => 'EXECUTABLE',
+    job_action => 'C:\\python_jobs\\project-data\\run_job.bat',
+    enabled    => TRUE
+  );
+END;
+/
+
+
+---
+
+17. Passage de paramètres depuis APEX
+
+BAT
+
+python src\main.py %1 %2
+
+Python
+
+import sys
+param1 = sys.argv[1]
+param2 = sys.argv[2]
+
+
+---
+
+18. Sécurité et contrôle
+
+Scripts stockés dans un répertoire protégé
+
+Droits d’exécution limités
+
+APEX n’accède jamais directement à Python
+
+Logs centralisés
+
+
+
+---
+
+19. Supervision et logs
+
+Logs applicatifs dans logs/job.log
+
+Suivi Oracle via :
+
+
+SELECT * FROM USER_SCHEDULER_JOB_RUN_DETAILS;
+
+
+---
+
+20. Règles obligatoires
+
+✔ Python officiel uniquement ✔ Environnement virtuel obligatoire ✔ requirements.txt verrouillé ✔ Exécution via BAT uniquement ✔ Git obligatoire ✔ Pas d’installations globales
+
+
+---
+
+21. Conclusion
+
+La mise en place de cette architecture garantit :
+
+Une standardisation complète de l’environnement Python
+
+Une intégration sécurisée avec Oracle APEX
+
+Une meilleure qualité de code
+
+Une maintenance simplifiée
+
+Une conformité totale avec la politique IT de l’entreprise
+
+
+Ce cadre constitue une base solide et évolutive pour l’industrialisation des traitements Python au sein de l’organisation.
+
+تم إعداد تقرير تقني كامل باللغة الفرنسية يجمع كل ما تم ذكره حول:
+
+توحيد بيئة Python بدون Anaconda
+
+العمل على Windows
+
+استعمال venv و requirements.txt
+
+تنظيم المشاريع وGit
+
+أفضل الممارسات
+
+الدمج مع Oracle APEX عبر ملفات BAT و DBMS_SCHEDULER
+
+الأمان، التتبع، والتشغيل الصناعي
+
+
+📄 التقرير جاهز كوثيقة داخلية رسمية ويمكن:
+
+اعتماده كـ Policy IT
+
+استعماله كدليل Onboarding
+
+تحويله إلى PDF أو Word
+
+تخصيصه باسم الشركة وشعارها
+
+
+إذا رغبت، أستطيع في الخطوة التالية:
+
+تحويله إلى PDF احترافي
+
+تبسيطه لنسخة Executive Summary
+
+إضافة Workflow CI/CD
+
+تخصيصه حسب Oracle Version / APEX Version
+
+
+قل لي ما تريد بالضبط 👍
