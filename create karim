@@ -1,0 +1,2 @@
+Bonjour,
+Le non-calcul du solde du prêt dans les contrats antérieurs est dû à une anomalie dans les données reçues de notre partenaire Crédit d’Algérie. En effet, nous avons reçu les souscriptions pour la première fois sans la valeur de la cotisation. Par conséquent, la valeur a été calculée et intégrée manuellement dans la base de données afin de résoudre le problème.
