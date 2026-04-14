@@ -1,0 +1,41 @@
+Pour tuer (killer) des sessions sur Oracle, vous devez d'abord identifier les identifiants uniques de ces sessions : le **SID** et le **SERIAL#**.
+Puisque vous utilisez **F95700** (vu sur votre capture), voici la marche à suivre.
+### 1. Identifier les sessions à supprimer
+Exécutez cette requête pour lister toutes vos sessions actives ou inactives. Cela vous permet d'obtenir les commandes de "kill" toutes prêtes.
+```sql
+SELECT 'ALTER SYSTEM KILL SESSION ''' || sid || ',' || serial# || ''' IMMEDIATE;' as kill_command,
+       sid, 
+       serial#, 
+       status, 
+       program, 
+       machine
+FROM v$session
+WHERE username = 'F95700'; -- Remplacez par votre schéma si nécessaire
+
+```
+### 2. Exécuter le Kill
+Une fois que vous avez le résultat, copiez la ligne générée dans la colonne kill_command et exécutez-la. La syntaxe est la suivante :
+```sql
+ALTER SYSTEM KILL SESSION 'SID,SERIAL#' IMMEDIATE;
+
+```
+*Exemple : ALTER SYSTEM KILL SESSION '123,4567' IMMEDIATE;*
+### 3. Cas particulier : Le processus reste "KILLED" mais ne disparaît pas
+Parfois, la session reste dans l'état "KILLED" pendant longtemps car Oracle attend que les transactions en cours fassent un **rollback** (retour arrière) pour garantir la cohérence des données.
+Si vous êtes sur le serveur (ou si vous avez accès à l'OS) et que vous devez forcer l'arrêt au niveau du système d'exploitation :
+ * **Sur Linux :**
+   1. Trouvez le SPID (System Process ID) :
+     ```sql
+     SELECT p.spid
+     FROM v$session s
+     JOIN v$process p ON s.paddr = p.addr
+     WHERE s.sid = VOTRE_SID;
+     
+     ```
+   2. En ligne de commande (Terminal) : kill -9 SPID
+ * **Sur Windows :**
+   Utilisez l'utilitaire orakill : orakill SID_INSTANCE SPID
+### Précautions importantes
+ * **Rollback :** Si votre procédure LANCEMENT_PM a déjà modifié beaucoup de lignes, le "kill" peut prendre du temps car Oracle doit annuler toutes les modifications pour remettre la base dans l'état initial.
+ * **Permissions :** Vous devez avoir les privilèges ALTER SYSTEM pour exécuter ces commandes. Si vous avez une erreur de privilèges, il faudra demander à votre DBA.
+**Est-ce que la procédure est bloquée sur une étape spécifique ou elle consomme juste trop de ressources ?**
