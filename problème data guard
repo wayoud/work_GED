@@ -1,0 +1,8 @@
+Objet : Alerte technique - Problème de synchronisation Data Guard (Gap de logs)
+Bonjour,
+Je vous informe qu'un incident de synchronisation est actuellement en cours sur notre environnement Data Guard.
+Nous avons constaté un écart (gap) important dans les logs : les fichiers ne sont plus envoyés vers le site de secours et ne sont donc plus appliqués depuis hier.
+Je suis actuellement en train d'analyser les causes possibles (problème réseau, corruption d'archive log ou souci sur le service de transport) afin de rétablir la situation et de résorber le retard au plus vite.
+Je vous tiendrai informé dès que le service sera de nouveau nominal.
+Cordialement,
+[Votre Nom]
