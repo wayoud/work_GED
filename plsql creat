@@ -1,0 +1,37 @@
+declare
+    -- Define a collection type for the strings
+    type t_mois_list is table of varchar2(7);
+    v_mois t_mois_list := t_mois_list(
+        '03/2022','04/2022','05/2022','06/2022','07/2022','08/2022','09/2022','10/2022','11/2022','12/2022',
+        '01/2023','02/2023','03/2023','04/2023','05/2023','06/2023','07/2023','08/2023','09/2023','10/2023','11/2023','12/2023',
+        '01/2024','02/2024','03/2024','04/2024','05/2024','06/2024','07/2024','08/2024','09/2024','10/2024','11/2024','12/2024',
+        '01/2025','02/2025','03/2025','04/2025'
+    );
+begin
+    -- Iterate through the collection elements
+    for i in 1 .. v_mois.count loop
+    
+        insert into prod_ade_ops (
+            MOIS, NUM_POLICE, IDTYPE_ASSU, TAX_PRIMSOLD, IDSPROD,
+            ID_STATPYMT, DATE_STAT_PYMT, CRD, ECHANCE, MNT_PRIME, NUM_PART,
+            IDASSURE, IDTYPEPMT, DATEPYMECHANCE, CLE_OPS, UTILISATEUR, DT_OPS,
+            ID_OPS, POSITION, MNT_PRIME_T, ANNEE, TAX_INTERET_RECAL, DURRE_CREDIT_RECAL,
+            ID_OPS, POSITION, MNT_PRIME_T, ANNEE, TAX_INTERET_RECAL, DURRE_CREDIT_RECAL, CRD1_RECAL,
+            MNT_FINANCE_RECAL, DUREE_RESTANTE_RECAL, MNT_ECHANCE_RECAL, CRD1_RECAL,
+            CRD2_RECAL, CRD_TRAITE, CRD_FINAL, OBSERVATION, TAX_INTERET_RECAL_PM,
+            DUREE_CREDIT_RECAL_PM, DUREE_RESTANTE_RECAL_PM, TAX_PRIME, NUMPRET,
+            CLE_OPS1, DOS_TYPE, STATUT_PRIME, TAX_PRIME_SUB, PRIME_SUB,
+            FRANCHISE, DEBUT_CRID, MOIS_AVENANT
+        )
+        values (
+            v_mois(i), 'LD2136364474', 'R', null, '3001851', 3, sysdate, 0, null, 783, '5130041221',
+            'ZIDANEABDELKRIM25/07/1979', null, null, 'LD2136364474ZIDANEABS13R', null, null, null, '1',
+            783, substr(v_mois(i), 4, 4), 0.06, 242, 1506558, null, null, null, null, null, null, null, null,
+            0.05, null, null, 'T24', null, null, null, 0, to_date('29/12/2021', 'dd/mm/yyyy'), null
+        );
+        
+    end loop;
+    
+    commit; -- Optional: Add if you want to persist changes immediately after the block completes successfully
+end;
+/
