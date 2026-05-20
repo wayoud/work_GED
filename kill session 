@@ -1,4 +1,4 @@
-Pour tuer (killer) des sessions sur Oracle, vous devez d'abord identifier les identifiants uniques de ces sessions : le **SID** et le **SERIAL#**.
+6Pour tuer (killer) des sessions sur Oracle, vous devez d'abord identifier les identifiants uniques de ces sessions : le **SID** et le **SERIAL#**.
 Puisque vous utilisez **F95700** (vu sur votre capture), voici la marche à suivre.
 ### 1. Identifier les sessions à supprimer
 Exécutez cette requête pour lister toutes vos sessions actives ou inactives. Cela vous permet d'obtenir les commandes de "kill" toutes prêtes.
@@ -38,4 +38,24 @@ Si vous êtes sur le serveur (ou si vous avez accès à l'OS) et que vous devez 
 ### Précautions importantes
  * **Rollback :** Si votre procédure LANCEMENT_PM a déjà modifié beaucoup de lignes, le "kill" peut prendre du temps car Oracle doit annuler toutes les modifications pour remettre la base dans l'état initial.
  * **Permissions :** Vous devez avoir les privilèges ALTER SYSTEM pour exécuter ces commandes. Si vous avez une erreur de privilèges, il faudra demander à votre DBA.
-**Est-ce que la procédure est bloquée sur une étape spécifique ou elle consomme juste trop de ressources ?**
+**Est-ce que la procédure est bloquée sur une étape spécifique ou elle consomme juste trop de ressources
+
+
+
+
+
+
+
+SELECT 
+    s.sid, 
+    s.serial#, 
+    s.username, 
+    s.osuser, 
+    s.machine, 
+    s.program,
+    l.type
+FROM v$session s
+JOIN v$lock l ON s.sid = l.sid
+WHERE l.id1 = (SELECT object_id FROM dba_objects WHERE object_name = 'CLAIM_IMPACTED_POLICIES_ODS')
+  AND l.request = 0;
+
