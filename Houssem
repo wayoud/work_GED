@@ -11,7 +11,11 @@ setlocal enabledelayedexpansion
 :: === Input and output files ===
 set "input=data.txt"
 set "csv=data.csv"
+666666666666666
 
+
+Bonjour Assia, j'espère que tu vas bien.
+​Pourrais-tu m'aider concernant une demande de visa pour la France ? J'ai effectué le paiement le 4 juin et, à ce jour, je n'ai toujours pas reçu de réponse, alors que mon départ est prévu pour le 23 juin
 :: === Generate date string (YYYY-MM-DD) ===
 for /f "tokens=2-4 delims=/.- " %%a in ('date /t') do (
     set "day=%%a"
