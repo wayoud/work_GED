@@ -1,0 +1,7 @@
+SELECT 
+    LIBELLE,
+    REGEXP_SUBSTR(LIBELLE, '[0-9]{2} [0-9]{2} [0-9]{4}$') AS extracted_date
+FROM input_cnep_mouvement_2026
+WHERE gl IN ('341982', '341983')
+  AND codeop = 'GENLIS'
+  AND dat_val IS NULL;
