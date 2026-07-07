@@ -83,3 +83,15 @@ Dès que le ticket sera ouvert et que tes disponibilités en présentiel seront 
 Cordialement,
 
 
+##########$$$$$#$$$$$$$$
+
+إليك التعديل على البريد باللغة الفرنسية ليوضح بدقة أن الاقتراح هو وضع قيمة PM مساوية لصفر لكل سطر تكون فيه قيمة prime mensuelle مساوية لصفر:
+Bonjour Amine,
+Merci pour l'ouverture de ce ticket. Afin que nous puissions analyser l'anomalie de manière précise, pourrais-tu nous éclairer sur les points suivants :
+ * Identification des données : Serait-il possible de nous indiquer s'il y a d'autres colonnes impactées dans le fichier Excel joint, en dehors de la colonne PM ?
+ * Règle de gestion : Est-ce qu'il suffit de configurer la règle pour que la valeur de la PM soit égale à 0 pour chaque ligne ayant une prime mensuelle (prime_mens) égale à 0, ou bien y a-t-il d'autres impacts à prévoir ?
+Ces précisions nous permettront de cibler exactement la modification à apporter.
+Cordialement,
+
+
+
