@@ -1,0 +1,36 @@
+إليك إعادة صياغة التقرير بالتفصيل باللغة الفرنسية، باتباع المخطط الجديد والهيكلة المطلوبة بدقة ليكون وثيقة رسمية جاهزة للمشاركة:
+RAPPORT D'INCIDENT TECHNIQUE & RÉSOLUTION
+Projet : Clôture et Archivage des Calculs PM – Avril 2026
+Date du rapport : 09 Juillet 2026
+Rédigé par : Équipe Technique (Data & AI)
+1. Déclenchement
+Le présent traitement a été formellement initié suite à la création du ticket d'incident sur la plateforme Service Now sous le numéro 896.
+2. Contexte
+Lors du lancement des calculs des Provisions Mathématiques (PM) pour le mois d'avril 2026, une anomalie a été identifiée sur une population de 170 polices. Ces contrats présentaient une prime mensuelle égale à 0, mais le système avait tout de même généré un calcul de PM, ce qui a bloqué le processus normal de clôture.
+3. Alignement
+Dès le signalement de cet écart, une réunion d’alignement d'urgence a été tenue en présentiel dans le bureau du Directeur des Opérations afin de définir une feuille de route claire. Cette séance a réuni le Directeur des Opérations, le Responsable Métier et l'équipe technique pour valider la méthodologie d'analyse à travers le fichier "PM Résultat".
+4. Analyse
+Une séance de travail approfondie a été menée en présentiel avec Karim. L'analyse a mis en lumière les faits suivants :
+ * Un cas de figure totalement inédit : Il s'agit d'une population de contrats spécifique, signalée et traitée pour la toute première fois, caractérisée par des contrats n'ayant jamais enregistré de prime payée (Impayés globaux).
+ * Origine du problème : Dans les données d'entrée, la colonne montant_prime affichait une valeur théorique supérieure à 0. L'algorithme actuel recherchait la "dernière prime enregistrée" et a donc pris en compte cette valeur par défaut. Ce cas de figure n'ayant jamais été rencontré ou spécifié auparavant, l'algorithme ne disposait pas de filtre pour l'exclure.
+ * Sélection des données : Durant cette séance, Karim a personnellement choisi et extrait les jeux de données (jeux de test) à analyser pour cibler précisément le dysfonctionnement.
+5. Solution
+Pour remédier définitivement à cette situation, l'action technique suivante a été réalisée sur le code :
+ * Modification de l'algorithme : Ajustement des règles de filtrage afin que le système ne prenne en considération que le montant_prime des primes effectivement payées et supérieures à zéro (primes payées seulement > 0).
+6. Tests et Validation
+Une fois l'algorithme corrigé, la phase de validation s'est déroulée comme suit :
+ * Exécution des tests : Trois (03) tests successifs ont été lancés en présence directe de Karim.
+ * Méthodologie : Ces tests ont été effectués sur des exemples spécifiques (clés d'opérations / cle_ops) choisis par Karim.
+ * Validation technique : À l'issue de ces trois simulations, Karim a formellement vérifié et validé la conformité des résultats obtenus. Suite à cela, le recalcul global de la population PM a été relancé.
+7. Observations
+(Partie réservée au Métier / À remplir par le Métier si nécessaire)
+> 
+8. Clôture administrative et "Service Fait"
+Conformément aux procédures internes de l'entreprise, la validation technique des tests ne vaut pas recette définitive pour l'archivage.
+Le lancement final et définitif du processus d'archivage reste strictement conditionné par la validation de la présente note et la signature officielle du document "Service Fait" par la hiérarchie et l'entité décisionnelle compétente.
+| Pour l'Équipe Technique (IT) | Pour l'Équipe Métier (Opérations) |
+|---|---|
+| Nom : [Votre Nom] | Nom : ............................................ |
+| Visa / Signature : | Visa / Signature (Service Fait) : |
+|  |  |
+| Date : 09/07/2026 | Date : ...... / ...... / 2026 |
