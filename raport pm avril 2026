@@ -67,4 +67,31 @@ Afin de clôturer ce dossier, nous vous prions de bien vouloir signer le rapport
 > À la suite de l'intervention, de l'évaluation, de la proposition d'une solution et des tests menés avec l'équipe concernée, un nouveau calcul a été réalisé. Les résultats obtenus ont été validés par l'équipe concernée, conformément à l'e-mail ci-joint.
 
 Pour finaliser et clôturer ce dossier, nous vous remercions de bien vouloir procéder à la signature du rapport ci-joint.
+@@@@@@@@@@
+
+
+
+
+
+Voici le résumé de l'incident et de sa résolution en français, de manière très concise :
+1. Source du Problème (L'origine)
+ * Cause principale : Une coupure brutale de courant a arrêté les machines virtuelles (VMs), mettant hors ligne la base de données secondaire (Data Guard Standby).
+ * Origine des erreurs d'intervention :
+   * ORA-01017 : La base étant arrêtée, elle ne pouvait plus vérifier les identifiants réseau car son dictionnaire de données interne était inaccessible.
+   * Blocage RMAN/SYS : L'invite de commande Windows (CMD) a mal interprété le mot de passe à cause de caractères spéciaux (comme ?).
+   * ORA-02232 : Une simple erreur de frappe dans la commande, écrite stanbby au lieu de standby.
+2. Solution Appliquée (La Réparation)
+Le rétablissement a été effectué avec succès via RMAN en suivant ces étapes précises :
+ * Connexion sécurisée : Utilisation des guillemets pour masquer les caractères spéciaux du mot de passe :
+   rman target "sys/MOT_DE_PASSE as sysdba"
+
+ * Démarrage initial : Initialisation de l'instance :
+   startup nomount;
+
+ * Montage de la base : Montage de la base de données en mode secours (avec la bonne orthographe) :
+   alter database mount standby database;
+
+ * Relance de la synchronisation : Activation de la récupération automatique en arrière-plan :
+   alter database recover managed standby database disconnect from session;
+
 
