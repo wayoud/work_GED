@@ -1,0 +1,41 @@
+Voici une proposition de rapport technique rédigée en français, structurée et adaptée pour être envoyée directement à votre responsable (Achour) ou à la direction.
+Objet : Évaluation technique et financière des offres AEBS et Monad – Projet Plateforme IA / Chatbot
+Émetteur : Wayoud, Tech Lead Data & AI
+Destinataire : Achour
+Date : 9 août 2026
+1. Synthèse Exécutive
+Dans le cadre du déploiement de notre solution de Chatbot et d’Intelligence Artificielle souveraine pour Cardif El Djazaïr, nous avons procédé à l’analyse comparative des propositions techniques et financières transmises par les prestataires AEBS et Monad.
+L'objectif principal est de doter l'entreprise d'une infrastructure d'IA robuste, évolutive et strictement conforme aux exigences de sécurité et de conformité du Groupe BNP Paribas.
+2. Comparatif Financier et Engagements
+| Critères | AEBS | Monad |
+|---|---|---|
+| Coût de Développement | 10 350 000 DZD HT (remise de 10% incluse) | 12 630 000 DZD HT (sur la base de 367 J/H) |
+| Option Hardware (Station IA) | Non incluse (à la charge de Cardif) | + 2 500 000 DZD HT (Station IA dédiée avec GPU RTX 5090) |
+| Budget Total (avec Hardware) | ~ 10,35 M DZD HT | 15 130 000 DZD HT |
+| Modalités de Paiement | 30% Commande / 60% PV Provisoire / 10% PV Définitif | 40% Commande / 40% Pre-prod / 20% Production |
+| Garantie | 12 mois inclus | Non spécifiée explicitement hors contrat TMA |
+| Maintenance Annuelle (TMA) | 1 863 000 DZD HT / an | 3 000 000 DZD HT / an (Option Business - 60 J/H) |
+3. Évaluation Technique & Architecture (Perspective Tech Lead)
+A. Offre Monad (Solution Recommandée Techniquement)
+ * Architecture RAG Hybride (GraphRAG) : Monad associe une base vectorielle (Qdrant) à une base orientée graphe (Neo4j). Pour le secteur de l'assurance, cette approche est déterminante car elle permet de modéliser avec précision les relations complexes entre contrats, garanties et clauses, réduisant ainsi drastiquement le risque d'hallucination du modèle.
+ * Approche Multi-Agents & Micro-tuning : Utilisation de l'architecture LoRA/QLoRA permettant de déployer plusieurs agents spécialisés (Conseiller, CRC) sans surcharger la mémoire GPU ni nécessiter de réentraîner le modèle global.
+ * Souveraineté & NLP Local : Modèle hébergé à 100% On-Premise avec un fine-tuning prenant en charge le contexte linguistique local (Arabe, Français et Darija).
+B. Offre AEBS (Solution Classique & Pragmatique)
+ * Architecture Web Standard : Solution orientée développement logiciel classique basée sur des protocoles standards (Keycloak, REST API, PostgreSQL).
+ * Limites : Moins axée sur l'ingénierie avancée des LLM/RAG. Elle nécessite que Cardif fournisse entièrement l'infrastructure d'hébergement et les accès aux modèles.
+4. Sécurité & Conformité aux Exigences BNP Paribas
+Afin de garantir l'alignement avec les standards de sécurité du Groupe BNP Paribas (Security by Design), les exigences suivantes devront être appliquées à la solution retenue :
+ * Isolation & Souveraineté des Données : Le système fonctionnera entièrement On-Premise (Air-Gapped) sans aucun appel API vers des services tiers externes.
+ * Protection PII & Anonymisation : Implémentation d'une couche intermédiaire d'anonymisation des données personnelles avant tout traitement par le Vector DB ou le LLM.
+ * Sécurisation IA (Prompt Injection & Guardrails) : Intégration de garde-fous (Guardrails) pour vérifier les entrées/sorties du modèle et prévenir les fuites d'instructions système.
+ * IAM & Traçabilité : Synchronisation complète avec notre annuaire d'entreprise (Keycloak / Active Directory) pour le contrôle d'accès basé sur les rôles (RBAC), ainsi qu'un suivi d'audit détaillé de toutes les interactions.
+5. Recommandation & Prochaines Étapes
+D'un point de vue Data & AI, je recommande d'opter pour l'offre de Monad. Bien que le coût initial soit plus élevé, la maturité de leur architecture (GraphRAG + On-Premise GPU) garantit la pérennité du projet, une précision optimale des réponses et le respect de la souveraineté de nos données.
+Recommandations pour la gestion du projet :
+ * Déploiement Phasé (MVP) : Valider d'abord la solution en interne (pilote pour les équipes CRC) avant toute ouverture vers le grand public.
+ * Revue de Sécurité (Sécurité Groupe) : Soumettre le cahier des charges d'architecture à la validation de nos équipes Cyber / Compliance avant le lancement de la phase d'implémentation.
+Je reste à votre entière disposition pour échanger de vive voix sur ces éléments.
+Cordialement,
+Wayoud
+Tech Lead Data & AI
+Cardif El Djazaïr
