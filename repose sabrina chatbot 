@@ -1,0 +1,25 @@
+إليك نموذج لبريد إلكتروني احترافي باللغة الفرنسية يمكنك إرساله لمسؤولك المباشر أو للإدارة رداً على طلبهم للحصول على رأيك الخبير في العرضين:
+Objet : Retour d'expertise IA & Recommandations – Évaluation des offres AEBS et Monad
+Bonjour Achour,
+J'espère que tu vas bien.
+A la suite de ta demande concernant l'évaluation technique des propositions transmises par AEBS et Monad pour notre projet de plateforme IA / Chatbot, tu trouveras ci-dessous mon analyse en tant que Tech Lead Data & AI, ainsi que mes recommandations pour garantir la réussite du projet et le respect de nos exigences Groupe.
+1. Synthèse de l'évaluation technique
+ * Offre Monad (Recommandée d'un point de vue technique & architecture) :
+   Monad propose une approche très aboutie et adaptée aux spécificités du secteur de l'assurance. Leur architecture GraphRAG (combinant base vectorielle Qdrant et base orientée graphe Neo4j) permet de cartographier avec précision les relations complexes entre nos contrats, clauses et garanties, ce qui réduit considérablement le risque d'hallucination du modèle. De plus, leur approche Multi-Agents via LoRA/QLoRA offre une excellente évolutivité à long terme sans surcharger la mémoire GPU. Enfin, la fourniture de la station IA sur site (On-Premise) garantit la souveraineté totale de nos données.
+ * Offre AEBS (Solution plus classique) :
+   AEBS présente une solution logicielle standard bien structurée sur le plan du développement web (Keycloak, REST API, PostgreSQL). Cependant, l'offre est moins axée sur l'ingénierie avancée des LLM/RAG et repose entièrement sur la mise à disposition préalable de l'infrastructure et des modèles par nos soins.
+2. Cadre financier global
+ * Monad : 15 130 000 DZD HT au total (12,63 M DZD pour le développement + 2,5 M DZD pour la station IA dédiée). Maintenance annuelle (TMA Business) : 3 000 000 DZD HT/an.
+ * AEBS : 10 350 000 DZD HT pour le développement (hors infrastructure matérielle). Garantie de 12 mois incluse et TMA annuelle à 1 863 000 DZD HT/an.
+3. Recommandations et précautions (Sécurité & Gestion de projet)
+Quelle que soit la solution retenue, il sera primordial d'intégrer les directives suivantes pour être en parfaite conformité avec les standards du Groupe BNP Paribas :
+ * Souveraineté et étanchéité des données (Air-Gapped) : Le modèle doit fonctionner à 100% On-Premise, sans aucun appel vers des API externes, assorti d'une couche d'anonymisation des données personnelles (PII) avant traitement.
+ * Sécurisation des Prompts & Guardrails : Implémenter des filtres stricts pour prévenir les attaques par Prompt Injection et contrôler les réponses du modèle.
+ * Déploiement progressif (MVP) : Réaliser une première phase pilote interne (équipe CRC) afin de valider la précision du RAG avant toute ouverture aux clients.
+Conclusion :
+D'un point de vue purement Data & AI, je recommande d'opter pour Monad. Bien que le coût initial soit plus élevé, leur architecture garantit la robustesse, la précision et la pérennité nécessaires pour un déploiement stratégique au sein de Cardif El Djazaïr.
+Je reste à ta disposition si tu souhaites que nous en meublions les détails lors d'un point de synchronisation.
+Bien cordialement,
+Wayoud
+Tech Lead Data & AI
+Cardif El Djazaïr
