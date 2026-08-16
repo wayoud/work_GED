@@ -30,3 +30,38 @@ SELECT * FROM V$ARCHIVE_GAP;
 
  * التحقق من أخطاء الـ Alert Log:
    افتح ملف alert_<SID>.log في قاعدة بيانات الـ Standby لمعرفة السبب الدقيق لوقوف التطبيق (مثل نقص المساحة أو ملف مفقود).
+
+
+××××××××××÷÷3÷÷÷3
+
+
+الفجوة محددة بدقة الآن: النطاق المفقود يبدأ من السلسلة 42320 وينتهي عند 42364 (Thread 1).
+خطوات الحل العملية لنقل وتطبيق الملفات المفقودة:
+1. تحديد أماكن الملفات المفقودة (نفّذ الاستعلام على الـ Primary)
+شغّل الاستعلام التالي على قاعدة البيانات الأصلية للحصول على مسارات الملفات المطلوبة على القرص:
+SELECT SEQUENCE#, NAME 
+FROM V$ARCHIVED_LOG 
+WHERE THREAD# = 1 
+  AND SEQUENCE# BETWEEN 42320 AND 42364 
+  AND STANDBY_DEST = 'NO';
+
+2. نقل الملفات
+انسخ جميع ملفات الأرشيف المحصورة بين Sequence 42320 و 42364 من سيرفر الـ Primary إلى أي مجلد موقت في سيرفر الـ Standby (مثلاً F:\APP\ORACLE\FAST_RECOVERY_AREA\OPSDB\GAP_LOGS\).
+3. تسجيل الملفات في الـ Standby (اختر إحدى الطرق)
+ * الطريقة الأسرع عبر RMAN (موصى بها):
+   افتح RMAN واربط بقاعدة الـ Standby، ثم نفّذ الأمر لتسجيل المجلد بالكامل دفعة واحدة:
+   RMAN> CATALOG START WITH 'F:\APP\ORACLE\FAST_RECOVERY_AREA\OPSDB\GAP_LOGS\';
+
+   (وافق بـ YES عندما يطلب RMAN التأكيد).
+ * أو التسجيل عبر SQL (ملف بملف أو بحلقة تكرارية):
+   ALTER DATABASE REGISTER LOGFILE 'F:\APP\ORACLE\FAST_RECOVERY_AREA\OPSDB\GAP_LOGS\ARC42320_...dbf';
+
+4. التأكد من معالجة الفجوة واستئناف التطبيق
+بعد تسجيل الملفات، ستبدأ عملية الـ MRP0 بتطبيق الملفات تلقائيًا. للتحقق من اختفاء الفجوة:
+SELECT * FROM V$ARCHIVE_GAP;
+
+(يفترض أن يعيد الاستعلام 0 rows).
+ثم تأكد من حالة التطبيق واستمرار الـ MRP:
+SELECT PROCESS, STATUS, SEQUENCE# FROM V$MANAGED_STANDBY WHERE PROCESS LIKE 'MRP%';
+
+
