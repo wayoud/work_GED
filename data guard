@@ -1,0 +1,32 @@
+بناءً على الصور المقدمة من استعلام v$archived_log في Oracle Data Guard، هناك فجوة أرشيف (Archive Gap) وتوقف في تطبيق الـ Redo Logs (MRP) على قاعدة البيانات الـ Standby.
+تحليل المشكلة من واقع الصور
+ * في قاعدة البيانات الأصلية (Primary - الصورة الأولى):
+   * الـ Sequence وصل إلى 42463.
+   * السجلات التي تحمل STANDBY_DEST = YES تظهر أن الـ Logs يتم إرسالها إلى وجهة الـ Standby (OPSDBSTDBY).
+ * في قاعدة البيانات الـ Standby (الصورة الثانية):
+   * آخر sequence تم تطبيقه بنجاح (APPLIED = YES) هو 42319.
+   * الـ sequences من 42365 إلى 42463 مسجلة بقيمة APPLIED = NO ولم تطبق بعد.
+   * يوجد فجوة كبيرة (Gap) بين 42319 و 42365 (Missing logs).
+خطوات التحقق والحل المقترحة
+1. التحقق من حالة عملية التطبيق (MRP Process) على الـ Standby
+تأكد أولاً مما إذا كانت عملية الـ MRP (Managed Recovery Process) تعمل أم أنها متوقفة:
+SELECT PROCESS, STATUS, SEQUENCE#, BLOCK# 
+FROM V$MANAGED_STANDBY 
+WHERE PROCESS LIKE 'MRP%';
+
+إذا لم تظهر أي نتيجة لـ MRP0، فهذا يعني أن عملية التطبيق متوقفة.
+2. التحقق من وجود فجوات الأرشيف (Archive Gap)
+شغّل الاستعلام التالي على الـ Standby لمعرفة الـ Redo Logs المفقودة بالضبط:
+SELECT * FROM V$ARCHIVE_GAP;
+
+3. خطوات المعالجة والإصلاح
+ * إذا كانت الـ MRP متوقفة، قم بإعادة تشغيلها:
+   ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+
+ * إذا كانت الـ Logs مفقودة من الـ Standby:
+   * قم بنسخ ملفات الـ Archived Redo Logs المفقودة (من Sequence 42320 إلى 42364) يدويًا من سيرفر الـ Primary إلى مسار الأرشيف في سيرفر الـ Standby.
+   * قم بتسجيل الملفات في الـ Standby باستخدام:
+     ALTER DATABASE REGISTER LOGFILE 'F:\APP\ORACLE\FAST_RECOVERY_AREA\...';
+
+ * التحقق من أخطاء الـ Alert Log:
+   افتح ملف alert_<SID>.log في قاعدة بيانات الـ Standby لمعرفة السبب الدقيق لوقوف التطبيق (مثل نقص المساحة أو ملف مفقود).
