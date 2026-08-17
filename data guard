@@ -1,4 +1,4 @@
-بناءً على الصور المقدمة من استعلام v$archived_log في Oracle Data Guard، هناك فجوة أرشيف (Archive Gap) وتوقف في تطبيق الـ Redo Logs (MRP) على قاعدة البيانات الـ Standby.
+8بناءً على الصور المقدمة من استعلام v$archived_log في Oracle Data Guard، هناك فجوة أرشيف (Archive Gap) وتوقف في تطبيق الـ Redo Logs (MRP) على قاعدة البيانات الـ Standby.
 تحليل المشكلة من واقع الصور
  * في قاعدة البيانات الأصلية (Primary - الصورة الأولى):
    * الـ Sequence وصل إلى 42463.
@@ -63,5 +63,86 @@ SELECT * FROM V$ARCHIVE_GAP;
 (يفترض أن يعيد الاستعلام 0 rows).
 ثم تأكد من حالة التطبيق واستمرار الـ MRP:
 SELECT PROCESS, STATUS, SEQUENCE# FROM V$MANAGED_STANDBY WHERE PROCESS LIKE 'MRP%';
+
+
+
+###########
+
+
+
+عندما تكون الفجوة (Gap) ضخمة جداً ونقل الملفات عبر الشبكة مستحيلاً، فإن الحل العملي هو إعادة بناء الـ Standby Database باستخدام Full Backup يتم نقله عبر قرص صلب خارجي (External Hard Drive / USB).
+إليك الخطوات التفصيلية خطوة بخطوة للقيام بذلك:
+المرحلة الأولى: الأفعال المطلوبة على سيرفر الـ Primary
+1. أخذ Full Backup غير مضغوط مع الـ Archives والـ Standby Controlfile:
+افتح RMAN على الـ Primary ونفّذ التالي لأخذ النسخة مباشرة إلى القرص الخارجي (مثلاً الحرف E:):
+rman target /
+
+داخل RMAN، افتح قناة نفّذ الأوامر التالية:
+RUN {
+  ALLOCATE CHANNEL c1 DEVICE TYPE DISK;
+  ALLOCATE CHANNEL c2 DEVICE TYPE DISK;
+
+  # 1. أخذ نسخة من كافة ملفات البيانات
+  BACKUP DATABASE FORMAT 'E:\StandbyBackup\data_%U';
+
+  # 2. أخذ نسخة من الـ Archive Logs الحالية
+  BACKUP ARCHIVELOG ALL FORMAT 'E:\StandbyBackup\arch_%U';
+
+  # 3. أخذ Standby Controlfile (خطوة حاسمة جداً)
+  BACKUP CURRENT CONTROLFILE FOR STANDBY FORMAT 'E:\StandbyBackup\standby_control.ctl';
+
+  RELEASE CHANNEL c1;
+  RELEASE CHANNEL c2;
+}
+
+2. تحديد الـ SCN الحالي للـ Primary (للمرجعية):
+من SQL*Plus على الـ Primary:
+SELECT CHECKPOINT_CHANGE# FROM V$DATABASE;
+
+3. فصل القرص الخارجي (E:) ونقله فيزيائياً إلى سيرفر الـ Standby.
+المرحلة الثانية: الأفعال المطلوبة على سيرفر الـ Standby
+قم بتوصيل القرص الخارجي بسيرفر الـ Standby (افترضنا أن مساره أصبح E:\StandbyBackup).
+1. إيقاف عملية التعافي وإغلاق قاعدة البيانات:
+افتح SQL*Plus على الـ Standby ونفّذ:
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+SHUTDOWN IMMEDIATE;
+
+2. تشغيل القاعدة في وضع NOMOUNT:
+STARTUP NOMOUNT;
+
+3. استعادة الـ Standby Controlfile من القرص الخارجي عبر RMAN:
+افتح RMAN على الـ Standby:
+rman target /
+
+داخل RMAN:
+RESTORE STANDBY CONTROLFILE FROM 'E:\StandbyBackup\standby_control.ctl';
+
+4. رفع قاعدة البيانات إلى وضع MOUNT:
+من داخل RMAN أو SQL*Plus:
+ALTER DATABASE MOUNT;
+
+5. تعريف RMAN بالنسخة الاحتياطية واستعادة قاعدة البيانات:
+داخل RMAN:
+# تعريف النظام بالملفات الموجودة على القرص الخارجي
+CATALOG START WITH 'E:\StandbyBackup\';
+
+# استعادة ملفات البيانات (سيتم كتابتها في مساراتها الأصلية على Standby)
+RESTORE DATABASE;
+
+المرحلة الثالثة: إعادة تشغيل المزامنة (Managed Recovery)
+1. التأكد من تنظيف المسارات وتحديث الـ Catalog (اختياري داخل RMAN):
+SWITCH DATABASE COPY;
+
+2. بدء عملية الـ Redo Apply على الـ Standby:
+من SQL*Plus على الـ Standby:
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+
+3. التحقق من عودة المزامنة بنجاح:
+SELECT PROCESS, STATUS, SEQUENCE#, BLOCK# 
+FROM V$MANAGED_STANDBY 
+WHERE PROCESS LIKE 'MRP%';
+
+ * يجب أن تظهر حالة MRP0 وهي تحولت إلى APPLYING_LOG أو WAIT_FOR_LOG بدلاً من WAIT FOR GAP.
+
 
 
