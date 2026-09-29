@@ -1,0 +1,34 @@
+Voici une sélection de sujets de Data Mining adaptés spécifiquement au positionnement et aux activités clés de Cardif El Djazaïr (spécialiste de l'assurance des personnes, de la prévoyance et de la bancassurance en Algérie) :
+1. Modélisation de la souscription et prédiction de l'adhésion en Bancassurance
+ * Thématique : Classification prédictive (Random Forest, XGBoost, Régression Logistique).
+ * Contexte Cardif : En tant qu'acteur majeur de la bancassurance, la vente de produits (assurance emprunteur, prévoyance) dépend de l'interaction avec les guichets bancaires partenaires.
+ * Problématique : Identifier le profil des clients bancaires les plus susceptibles d'adhérer à un contrat de prévoyance ou d'assurance de personnes lors d'une demande de crédit.
+ * Objectif : Concevoir un moteur de recommandation / score d'appétence pour aider les conseillers bancaires à cibler les offres adaptées au bon moment.
+2. Analyse prédictive du rachat précoce et du Churn sur les contrats de Prévoyance
+ * Thématique : Analyse de survie & Algorithmes de Classification.
+ * Contexte Cardif : La rétention des assurés sur le long terme est un levier direct de rentabilité pour les produits d'assurance de personnes.
+ * Problématique : Quels facteurs (profil socio-économique, canal d'acquisition, évolution de la prime, durée d'ancienneté) déclenchent le non-renouvellement ou le rachat anticipé d'un contrat ?
+ * Objectif : Prédire la probabilité de résiliation à 3, 6 ou 12 mois afin de déclencher des actions de fidélisation automatisées ou ciblées.
+3. Détection d'anomalies et d'irrégularités dans les déclarations de sinistres Santé / Prévoyance
+ * Thématique : Détection d'anomalies (Isolation Forest, Autoencoders, Clustering DBSCAN).
+ * Contexte Cardif : Les demandes d'indemnisation pour arrêt de travail, invalidité ou incapacité nécessitent une instruction rigoureuse pour éviter les abus ou fraudes documentaires.
+ * Problématique : Comment identifier automatiquement des dossiers de sinistres présentant des profils atypiques (délai de déclaration inhabituel, incohérences d'âge/pathologie, montants hors normes) sans ralentir le traitement des dossiers légitimes ?
+ * Objectif : Automatiser le tri des dossiers en deux flux : validation rapide (Fast-Track) et contrôle approfondi (Audit).
+4. Cross-Selling intelligent : Recommandation d'assurance Individuelle Accident / Prévoyance
+ * Thématique : Rules Mining (Apriori, FP-Growth) & Collaborative Filtering.
+ * Contexte Cardif : Développer le portefeuille en proposant des garanties complémentaires (ex: Garantie Hospitalisation, Individuelle Accident) aux détenteurs d'un contrat lié à un crédit.
+ * Problématique : Découvrir les combinaisons de produits et les moments clés de la vie du client qui favorisent la souscription d'une seconde couverture.
+ * Objectif : Construire une matrice de recommandation de produits complémentaires pour les campagnes marketing directes.
+5. Automatisation et classification textuelle des réclamations clients (Text Mining / NLP)
+ * Thématique : Text Mining & Natural Language Processing (BERT, TF-IDF + Classifier).
+ * Contexte Cardif : L'amélioration de l'expérience client et de la qualité de service dans le traitement des demandes et griefs.
+ * Problématique : Comment catégoriser rapidement les réclamations et e-mails entrants (problème de prélèvement, retard d'indemnisation, demande d'attestation) pour les router vers les bons gestionnaires ?
+ * Objectif : Extraire les thématiques clés, analyser le sentiment (positif/négatif/urgent) et prioriser le traitement des messages entrants.
+Synthèse comparative pour le choix du sujet
+| Sujet | Données requises | Métier principal impacté |
+|---|---|---|
+| 1. Score d'appétence Bancassurance | Historique de souscription & profils clients | Direction Commerciale & Partenariats |
+| 2. Prédiction du Churn / Rachat | Données de vie du contrat & paiements | Rétention & Actuariat |
+| 3. Détection d'anomalies Sinistres | Historique des sinistres & prestations | Direction des Gestions & Sinistres |
+| 4. Cross-Selling Prévoyance | Portefeuille multi-produits | Marketing & Data Analytics |
+| 5. Classification des Réclamations | Textes de réclamations & e-mails | Service Client & Qualité |
