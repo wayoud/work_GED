@@ -1,0 +1,13 @@
+BEGIN
+  DBMS_NETWORK_ACL_ADMIN.APPEND_HOST_ACE (
+    host       => '*',                            -- أو يمكنك تحديد IP خادم SMTP بدلاً من '*'
+    lower_port => 25,
+    upper_port => 25,
+    ace        => xs$ace_type(
+                    privilege_list => xs$name_list('connect', 'resolve'),
+                    principal_name => 'SYRTA',     -- ضع اسم المستخدم الذي ينفذ الإجراء هنا
+                    principal_type => xs_acl.ptype_db
+                  )
+  );
+END;
+/
