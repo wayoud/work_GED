@@ -1,0 +1,14 @@
+إليك نموذج بريد إلكتروني صاغر باحترافية عالية باللغة الفرنسية موجه للفرق أو الأطراف المعنية بخصوص توجيهات تحسين وثيقة التعبير عن الاحتياجات (Expression du Besoin - EDB):
+Objet : Recommandations et directives pour l'amélioration de l'Expression du Besoin (EDB)
+Bonjour,
+Dans le cadre de l'optimisation de notre document d'Expression du Besoin (EDB), qui décrit actuellement la situation de l'entreprise, les attentes du projet et la classification des besoins par sous-modules, nous devons apporter des clarifications et des enrichissements méthodologiques sur les points suivants :
+ * Découpage par module : Élaborer une EDB distincte et détaillée pour chaque module, en accordant une priorité absolue au module d'entrée en relation client (Onboarding / KYC).
+ * Scénarios de fonctionnement (AS-IS / TO-BE) : Détailler le scénario de travail actuel (AS-IS) ainsi que le scénario cible attendu dans la nouvelle application (TO-BE), en précisant clairement les rôles des intervenants et les étapes d'interaction afin d'identifier précisément les fonctionnalités à développer.
+ * Modélisation des processus : Illustrer et schématiser les interactions et flux de travail à l'aide de diagrammes d'activité (Diagrammes d'activité UML / BPMN).
+ * Focalisation sur les besoins fonctionnels : Se concentrer exclusivement sur la définition des besoins fonctionnels. Les besoins non-fonctionnels ne doivent pas être abordés à ce stade, car ils relèvent de la responsabilité de l'équipe IT et feront l'objet d'une étude technique dédiée avec nos partenaires.
+ * Détail des fonctionnalités et livrables attendus : Détailler chaque fonctionnalité à développer en spécifiant ce qui est attendu du développeur (écrans/interfaces, règles de gestion et tâches spécifiques au sein de l'application).
+ * Critères de recette et d'évaluation : Définir des critères clairs et mesurables pour l'évaluation et la validation des tâches réalisées (Critères d'acceptation / Definition of Done).
+ * Volumétrie et typologie des données : Préciser le volume estimé des flux de données ainsi que la typologie et le format des données à traiter.
+Je reste à votre entière disposition pour échanger sur ces orientations et vous accompagner dans leur mise en œuvre.
+Cordialement,
+إذا كنت بحاجة إلى تعديل أي صيغة أو إضافة تفاصيل أخرى، أخبرني بذلك!
