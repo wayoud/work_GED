@@ -76,3 +76,37 @@ Partie 3 : Recommandations pour Renforcer le Document (Action Plan)
    * Imposer la livraison intégrale du Code Source, de la documentation OpenAPI/Swagger, des rapports d'audit de sécurité (Pen-Tests/OWASP) et le déploiement sur 4 environnements hermétiques (DEV, TEST, UAT, PROD).
 💡 Bilan et Note Globale
 Le document actuel est très professionnel et de grande qualité (Note : 8,5/10). En lui adjoignant l'annexe sur la maturité des APIs et la matrice des exigences non-fonctionnelles (NFRs), vous disposerez d'un Cahier des Charges hermétique garantissant une mise en concurrence optimale sans surcoûts imprévus (Change Requests).
+#########
+
+
+
+
+بصفتي خبيراً في هندسة البرمجيات وإدارة المشاريع الرقمية، إرفاق ملحق تقني وتنفيذي (Annexe Technique et Méthodologique) مع البريد الإلكتروني يُعطي قوة كبيرة للرسالة، ويضع إطاراً عملياً واضحاً للفرق المسؤولة عن صياغة وتحديث وثيقة الـ EDB.
+إليك نص الملحق باللغة الفرنسية (مصحوباً بترجمة وتوضيح بالعربية) يمكنك إرفاقه مباشرة مع الإيميل:
+📄 النص الإداري والتقني للملحق (باللغة الفرنسية)
+ANNEXE : Directives Méthodologiques et Bonnes Pratiques pour l'Élaboration des EDB
+(À joindre au mail à destination des équipes projet)
+1. Découpage Modulaire et Alignement Business
+ * Autonomie des EDBs : Rédiger un document d'Expression du Besoin (EDB) autonome par module métier (ex: EER / Onboarding & KYC, Souscription, Gestion des Sinistres). Cela facilite l'allotissement commercial et le suivi agile des livrables.
+ * Priorisation du Module KYC / EER : Le module d'Entrée en Relation Client constitue le socle opérationnel. Il doit être traité en priorité absolue car il conditionne la structure de la base de données et les règles d'habilitation.
+2. Cartographie des Parcours (AS-IS vs TO-BE)
+ * Analyse de l'Existant (AS-IS) : Documenter le processus manuel/actuel en identifiant clairement les points de friction (délais, saisies multiples, manque de visibilité).
+ * Processus Cible (TO-BE) : Décrire pas à pas le fonctionnement attendu dans la nouvelle plateforme, en précisant pour chaque étape : Qui fait quoi ? Sur quelle interface ? Avec quelles validations ?
+ * Standardisation BPMN : Accompagner chaque scénario d'un Diagramme d'Activité UML / BPMN structuré en lignes d'eau (Lanes) pour séparer visuellement les actions du Client, du Conseiller, et du Système automatisé.
+3. Cadrage du Périmètre Fonctionnel (Functional Scope Only)
+ * Séparation Stricte (Fonctionnel vs IT) : L'EDB métier doit se concentrer exclusivement sur le "QUOI" (besoins opérationnels, règles métier, parcours) et non sur le "COMMENT" (architecture, choix des langages, bases de données).
+ * Exclusion des Exigences Non-Fonctionnelles (NFR) : Les aspects d'infrastructure, de sécurité réseau, de temps de réponse API, et de SLA restent du ressort exclusif de la DSI/IT et seront traités dans un document technique dédié (DAT / DEX).
+4. Spécification Détaillée des Interfaces et IHM (UI/UX)
+ * Catalogage des Écrans : Pour chaque fonctionnalité, lister et décrire les vues/écrans attendus (ex: Formulaire de saisie KYC, Tableau de bord de suivi, Écran de validation médicale).
+ * Wireframes / Zoning : Il est fortement recommandé d'inclure des maquettes simplifiées (Wireframes / Mockups) pour valider l'expérience utilisateur (UX) avant le début des développements.
+ * Description des Champs et Règles de Gestion (BRE) : Préciser pour chaque champ : le type (texte, date, liste déroulante), le caractère obligatoire ou optionnel, et les règles de validation (ex: âge limite, seuils financiers).
+5. Critères de Recette et Qualité (Acceptance Criteria)
+ * Définition du "Done" (DoD) : Chaque tâche/fonctionnalité doit être assortie de critères de recette explicites (ex: "Le contrat ne peut être validé si la pièce d'identité n'est pas chargée et conforme").
+ * Scénarios de Test Métier : Lister les cas nominaux, les cas limites (Edge Cases) et les cas d'erreur à tester lors de la recette utilisateur (UAT).
+6. Volumétrie et Typologie des Données
+ * Structure des Données : Définir la typologie des données manipulées (données structurées JSON/Excel, documents scannés PDF/HEIC, flux photos).
+ * Incrémentation et Volumétrie : Préciser la fréquence et le volume estimé des flux (ex: Nombre de nouveaux dossiers KYC par jour, taille moyenne des pièces jointes).
+💡 توضيح وأهمية هذه النقاط (لك كـ Tech Lead / خبير):
+ * التركيز على الوظيفي فقط (Scope Isolation): فصل الجانب الوظيفي عن النمط التقني يمنع التضارب بين كتابات فريق العمليات (Business) وفريق الـ IT، ويجبر شركة البرمجيات على تسعير المجهود البرمجي (Functional Effort) بشكل دقيق دون التذرع بوجود تعقيدات تقنية غير واضحة.
+ * النمذجة برسم الـ BPMN: وجود خريطة تدفق بـ (Diagramme d'activité) يختصر عشرات الصفحات من السرد الكتابي ويمنع سوء الفهم بين المطور والمحلل.
+ * تحديد معايير القبول (Acceptance Criteria): يضمن لك عدم استلام أي شاشة أو ميزَة برمجية من المطور إلا إذا كانت تستجيب للشروط المحددة مسبقاً، مما يسهل عملية الـ Recette / UAT وحفظ حقوق الشركة عند التسليم.
