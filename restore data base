@@ -1,0 +1,112 @@
+فهمت قصدك تماماً. تريد إجراء اختبار استعادة (Test Restore) على قاعدة البيانات الأساسية (Primary) التي يعتمد عليها التطبيق، مع إيقاف الـ Data Guard مؤقتاً لضمان عدم تأثر الـ Standby بالتجارب، وفي نهاية الاختبار تضمن إرجاع الـ Primary لحالتها الأصلية تماماً قبل الاختبار وإعادة تفعيل الـ Data Guard دون مشاكل.
+لكي تضمن العودة بـ Primary إلى وضعها الطبيعي تماماً قبل الاختبار وكأن شيئاً لم يكن، السر يكمن في استخدام (Guaranteed Restore Point) على الـ Primary قبل بدء الـ Restore، مع تجميد الـ Standby مؤقتاً.
+إليك الخطوات التفصيلية مع كافة الأوامر (CMD/SQL/RMAN) خطوة بخطوة:
+Phase 1: إعداد البيئة وتجميد Data Guard مؤقتاً
+الخطوة 1.1: تجميد قاعدة البيانات الاحتياطية (Standby)
+افتح CMD على سيرفر Standby واتصل بـ SQL*Plus لإيقاف استقبال وتطبيق السجلات حتى لا تتأثر بالاختبار:
+sqlplus / as sysdba
+
+-- 1. إيقاف عملية تطبيق السجلات (MRP)
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+
+-- 2. إيقاف قاعدة البيانات الـ Standby تماماً لضمان عدم تأثرها
+SHUTDOWN IMMEDIATE;
+EXIT;
+
+الخطوة 1.2: إنشاء نقطة حفظ مضمونة (Guaranteed Restore Point) على Primary
+افتح CMD على سيرفر Primary. هذه هي الخطوة التي تضمن لك إرجاع الـ Primary كما كانت قبل الاختبار تماماً.
+sqlplus / as sysdba
+
+-- 1. التأكد من تفعيل وضع Flashback
+SELECT FLASHBACK_ON FROM V$DATABASE;
+
+-- إذا لم يكن مفعلاً، قم بتفعيله (يتطلب وضع MOUNT):
+-- SHUTDOWN IMMEDIATE;
+-- STARTUP MOUNT;
+-- ALTER DATABASE FLASHBACK ON;
+-- ALTER DATABASE OPEN;
+
+-- 2. إنشاء نقطة الحفظ قبل بدء الاختبار
+CREATE RESTORE POINT before_test_rp GUARANTEE FLASHBACK DATABASE;
+
+-- 3. إيقاف إرسال السجلات إلى Standby مؤقتاً
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_STATE_2='DEFER' SCOPE=BOTH;
+EXIT;
+
+Phase 2: تنفيذ عملية الاستعادة والاختبار على Primary
+الخطوة 2.1: إيقاف Primary ووضعها في حالة MOUNT
+على سيرفر Primary:
+sqlplus / as sysdba
+
+SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+EXIT;
+
+الخطوة 2.2: استعادة النسخة الاحتياطية Level 0 واختبارها
+افتح RMAN على سيرفر Primary:
+rman target /
+
+-- 1. استعادة ملفات البيانات من Level 0
+RESTORE DATABASE;
+
+-- 2. استرداد التغييرات (Recover)
+RECOVER DATABASE;
+EXIT;
+
+افتح قاعدة البيانات لاستخدامها واختبار التطبيق:
+sqlplus / as sysdba
+
+-- فتح قاعدة البيانات للتطبيقات والاختبار
+ALTER DATABASE OPEN RESETLOGS;
+
+> الآن يمكنك تشغيل التطبيق وإجراء جميع الاختبارات التي تريدها.
+> 
+Phase 3: إلغاء الاختبار وإعادة Primary إلى حالتها قبل الاختبار (Rollback)
+بعد الانتهاء من الاختبار، لـ إعادة الـ Primary إلى حالتها الأولى قبل الاختبار تماماً:
+على سيرفر Primary:
+sqlplus / as sysdba
+
+-- 1. إيقاف قاعدة البيانات
+SHUTDOWN IMMEDIATE;
+
+-- 2. تشغيلها في وضع MOUNT
+STARTUP MOUNT;
+
+-- 3. العودة بالزمن إلى ما قبل الاختبار تماماً باستعمال نقطة الحفظ
+FLASHBACK DATABASE TO RESTORE POINT before_test_rp;
+
+-- 4. فتح قاعدة البيانات بـ RESETLOGS
+ALTER DATABASE OPEN RESETLOGS;
+
+-- 5. حذف نقطة الحفظ لتوفير المساحة
+DROP RESTORE POINT before_test_rp;
+EXIT;
+
+Phase 4: إعادة تشغيل وتفعيل Data Guard
+الآن أصبحت الـ Primary بنفس الحالة والبيانات التي كانت عليها قبل بدء الاختبار. نعود لتفعيل الـ Data Guard:
+الخطوة 4.1: إعادة تفعيل إرسال السجلات من Primary
+على سيرفر Primary:
+sqlplus / as sysdba
+
+ALTER SYSTEM SET LOG_ARCHIVE_DEST_STATE_2='ENABLE' SCOPE=BOTH;
+EXIT;
+
+الخطوة 4.2: تشغيل الـ Standby وإعادة المزامنة
+على سيرفر Standby:
+sqlplus / as sysdba
+
+-- 1. تشغيل Standby في وضع MOUNT
+STARTUP MOUNT;
+
+-- 2. إعادة تشغيل عملية المزامنة (MRP)
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE DISCONNECT FROM SESSION;
+
+الخطوة 4.3: التحقق النهائي من المزامنة
+على سيرفر Primary:
+-- إرسال switch log لتأكيد التواصل مع Standby
+ALTER SYSTEM SWITCH LOGFILE;
+
+على سيرفر Standby:
+-- التحقق من وصول السجلات وعدم وجود Gap
+SELECT SEQUENCE#, APPLIED FROM V$ARCHIVED_LOG ORDER BY SEQUENCE# DESC;
+
