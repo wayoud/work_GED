@@ -1,0 +1,6 @@
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 11 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo11.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 12 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo12.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 13 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo13.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 14 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo14.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 15 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo15.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 16 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo16.log') SIZE 200M;
