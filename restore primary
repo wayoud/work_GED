@@ -1,0 +1,39 @@
+إليك ملخص شامل ومنظم لخطوات وأوامر العمل التي قمنا بتنفيذها لحل مشكلة المزامنة واستعادة استقرار الـ Data Guard بعد عملية الـ Point-in-Time Recovery والـ RESETLOGS:
+المرحلة الأولى: تهيئة وإنشاء ملفات الاسترداد الاحتياطية (Standby Redo Logs - SRLs)
+لتمكين المزامنة الحية وتجاوز أخطاء نقص المجموعات المتوافقة مع حجم الـ 200MB، قمنا بإنشاء المجموعات من 21 إلى 26 على خادم الـ Standby:
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 21 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo21.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 22 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo22.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 23 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo23.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 24 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo24.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 25 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo25.log') SIZE 200M;
+ALTER DATABASE ADD STANDBY LOGFILE GROUP 26 ('O:\app\oracle\product\19.3.0\dbhome_1\oradata\OPSDB\sredo26.log') SIZE 200M;
+
+المرحلة الثانية: إدارة حالة قاعدة البيانات Standby
+لضمان إيقاف أي عمليات استرداد معلقة (Media Recovery) ووضع القاعدة في الحالة السليمة للربط:
+ * إيقاف المزامنة المؤقتة:
+   ALTER DATABASE RECOVER MANAGED STANDBY DATABASE CANCEL;
+
+ * ضبط قاعدة البيانات في وضع الـ MOUNT الصحيح:
+   SHUTDOWN IMMEDIATE;
+STARTUP MOUNT;
+
+المرحلة الثالثة: تفعيل المزامنة الحية (Real-Time Apply)
+تشغيل خدمة الاسترداد والمزامنة الفورية عبر ملفات الـ SRLs:
+ALTER DATABASE RECOVER MANAGED STANDBY DATABASE USING CURRENT LOGFILE DISCONNECT;
+
+المرحلة الرابعة: دفع السجلات وتوليدها من الـ Primary
+لإجبار النظام على عمل تبديل ودفع التسلسلات الحالية عبر الشبكة:
+ALTER SYSTEM ARCHIVE LOG CURRENT;
+ALTER SYSTEM SWITCH LOGFILE;
+
+المرحلة الخامسة: أوامر المراقبة والتحقق (Monitoring & Verification)
+ * التحقق من حالة عمليات الـ Managed Standby (مثل MRP و RFS):
+   SELECT PROCESS, STATUS, THREAD#, SEQUENCE#, BLOCK# 
+FROM V$MANAGED_STANDBY;
+
+ * التحقق من الأرشيف والسجلات المطابقة للتجسيد الحالي (Incarnation) لتفادي تداخل الأرقام القديمة:
+   SELECT THREAD#, SEQUENCE#, ARCHIVED, APPLIED, COMPLETION_TIME 
+FROM V$ARCHIVED_LOG 
+WHERE RESETLOGS_CHANGE# = (SELECT RESETLOGS_CHANGE# FROM V$DATABASE)
+ORDER BY SEQUENCE# DESC;
+
