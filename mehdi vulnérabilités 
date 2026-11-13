@@ -1,0 +1,16 @@
+Bonjour,
+
+Les fichiers présentant des vulnérabilités ont été traités sur les deux serveurs A et B. Les anciennes versions ont été déplacées dans le dossier "temp" et remplacées par de nouvelles versions dans le répertoire "D:\app".
+
+La version actuellement active est donc la version modifiée.
+
+En cas de dysfonctionnement des rapports lors de l'utilisation de l'une des deux applications, veuillez revenir à la version originale en suivant la procédure suivante :
+
+- Copier la version originale du serveur A vers le serveur B.
+- Exécuter le fichier ".bat" situé dans le répertoire "D:\app\bin".
+
+À noter que les rapports ont été testés et fonctionnent correctement après cette modification.
+
+Après une période d'une semaine, si aucun dysfonctionnement ou anomalie n'est signalé, les anciennes versions originales seront définitivement supprimées afin d'éviter qu'elles ne soient détectées à nouveau lors des prochains scans de vulnérabilités.
+
+Cordialement.
