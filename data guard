@@ -146,3 +146,19 @@ WHERE PROCESS LIKE 'MRP%';
 
 
 
+###########################################
+
+
+Bonjour,
+
+Le Data Guard a été restauré avec succès.
+
+Après analyse, nous avons constaté que l'incident était dû à la saturation de l'espace de stockage, causée par le volume important des fichiers journaux (logs).
+
+Aujourd'hui, une extension de **100 Go** a été ajoutée afin de résoudre ce problème et d'éviter qu'il ne se reproduise à court terme.
+
+Cordialement,
+
+
+
+
